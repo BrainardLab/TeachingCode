@@ -1,0 +1,1 @@
+function Z = MakeESLikely(X,Y,u,K);[m,n] = size(X);Z = zeros(size(X));for i = 1:m	for j = 1:n		if (length(u) == 1)			arg = [X(i,j).*Y(i,j)]';		else			error('Does not work with more than 1 dimensional response');		end		Z(i,j) = MultiNormalPDF(arg,u,K);	endend

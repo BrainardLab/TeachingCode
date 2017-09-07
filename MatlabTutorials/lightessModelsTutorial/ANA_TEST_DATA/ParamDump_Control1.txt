@@ -1,0 +1,48 @@
+Dataset SIonGlossy
+	Reference params: gain = 4.8, offset = -0.038, rmax = 1, exp = 3
+	Gain only model: gain = 0.2, offset = -0.038, log10 gain change = 1.4, log10 effective offset = -1.4, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.11, offset = -1.9, log10 gain change = 1.6, log10 effective offset = -2.2, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.17, offset = -0.25, log10 gain change = 1.6, log10 effective offset = -2.2, rmax = 1, exp = 1.6
+	Predicted (actual) black point 0.068 (0.066); white point 1.1e+02 (1.7e+02)
+	One-in predicted black point 0.18 (0.17); white point 89 (1e+02)
+
+Dataset SIoffGlossy
+	Reference params: gain = 4.8, offset = -0.038, rmax = 1, exp = 3
+	Gain only model: gain = 0.21, offset = -0.038, log10 gain change = 1.3, log10 effective offset = -1.4, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.12, offset = -1.8, log10 gain change = 1.6, log10 effective offset = -2.2, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.18, offset = -0.26, log10 gain change = 1.6, log10 effective offset = -2.2, rmax = 1, exp = 1.6
+	Predicted (actual) black point 0.067 (0.059); white point 97 (1.5e+02)
+	One-in predicted black point 0.18 (0.18); white point 77 (1.2e+02)
+
+Dataset SIoldMatte
+	Reference params: gain = 5.1, offset = 0.0011, rmax = 1, exp = 3
+	Gain only model: gain = 0.13, offset = 0.0011, log10 gain change = 1.6, log10 effective offset = -3, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.13, offset = -0.11, log10 gain change = 1.6, log10 effective offset = -2.4, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.16, offset = 0.056, log10 gain change = 1.6, log10 effective offset = -2.4, rmax = 1, exp = 1.5
+	Predicted (actual) black point NaN (NaN); white point 1.3e+02 (1.4e+02)
+	One-in predicted black point NaN (NaN); white point 1e+02 (1.1e+02)
+
+Dataset fMonGlossy
+	Reference params: gain = 4.8, offset = -0.038, rmax = 1, exp = 3
+	Gain only model: gain = 0.14, offset = -0.038, log10 gain change = 1.5, log10 effective offset = -1.4, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.075, offset = -2.8, log10 gain change = 1.8, log10 effective offset = -2.2, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.11, offset = -0.42, log10 gain change = 1.8, log10 effective offset = -2.2, rmax = 1, exp = 1.6
+	Predicted (actual) black point 0.071 (0.077); white point 1.7e+02 (1.5e+02)
+	One-in predicted black point 0.25 (0.18); white point 1.3e+02 (1.6e+02)
+
+Dataset fMoffGlossy
+	Reference params: gain = 4.8, offset = -0.038, rmax = 1, exp = 3
+	Gain only model: gain = 0.13, offset = -0.038, log10 gain change = 1.6, log10 effective offset = -1.4, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.07, offset = -3, log10 gain change = 1.8, log10 effective offset = -2.2, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.1, offset = -0.54, log10 gain change = 1.8, log10 effective offset = -2.2, rmax = 1, exp = 1.6
+	Predicted (actual) black point 0.063 (0.058); white point 1.6e+02 (1.8e+02)
+	One-in predicted black point 0.27 (0.36); white point 1.3e+02 (1.6e+02)
+
+Dataset fMoldMatte
+	Reference params: gain = 5.1, offset = 0.0011, rmax = 1, exp = 3
+	Gain only model: gain = 0.095, offset = 0.0011, log10 gain change = 1.7, log10 effective offset = -3, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.095, offset = -0.11, log10 gain change = 1.7, log10 effective offset = -2.5, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.093, offset = -0.41, log10 gain change = 1.7, log10 effective offset = -2.5, rmax = 1, exp = 1.7
+	Predicted (actual) black point NaN (NaN); white point 1.7e+02 (1.9e+02)
+	One-in predicted black point NaN (NaN); white point 1.3e+02 (1.3e+02)
+

@@ -1,0 +1,1 @@
+function Z = Make2DGaussian(X,Y,u,K);[m,n] = size(X);Z = zeros(size(X));for i = 1:m	for j = 1:n		arg = [X(i,j) ; Y(i,j)];		Z(i,j) = MultiNormalPDF(arg,u,K);	endend

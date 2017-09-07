@@ -1,0 +1,183 @@
+Dataset FullGlossyfull3 ajh
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.19, offset = -0.035, log10 gain change = 1.4, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.095, offset = -2.2, log10 gain change = 1.7, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.14, offset = -0.31, log10 gain change = 1.7, log10 effective offset = -2.1, rmax = 1, exp = 1.5
+	Predicted (actual) black point 0.032 (0.03); white point 1.5e+02 (2.6e+02)
+	One-in predicted black point 0.12 (0.13); white point 1.1e+02 (1.3e+02)
+
+Dataset FullGlossyfull3 arp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.24, offset = -0.035, log10 gain change = 1.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.13, offset = -1.6, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.22, offset = -0.067, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 1.2
+	Predicted (actual) black point 0.045 (0.095); white point 1.9e+02 (2.2e+02)
+	One-in predicted black point 0.08 (0.029); white point 1.3e+02 (1.1e+02)
+
+Dataset FullGlossyfull3 kjn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.21, offset = -0.035, log10 gain change = 1.4, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.11, offset = -1.9, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.18, offset = -0.16, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 1.4
+	Predicted (actual) black point 0.046 (0.071); white point 1.5e+02 (1.9e+02)
+	One-in predicted black point 0.1 (0.041); white point 1.1e+02 (85)
+
+Dataset FullGlossyfull3 orp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.23, offset = -0.035, log10 gain change = 1.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.12, offset = -1.8, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.19, offset = -0.092, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 1.3
+	Predicted (actual) black point 0.068 (0.043); white point 1.7e+02 (1.7e+02)
+	One-in predicted black point 0.12 (0.2); white point 1.2e+02 (1.2e+02)
+
+Dataset FullGlossyfull3 rvn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.13, offset = -0.035, log10 gain change = 1.6, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.066, offset = -3.2, log10 gain change = 1.9, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.097, offset = -0.5, log10 gain change = 1.9, log10 effective offset = -2.1, rmax = 1, exp = 1.6
+	Predicted (actual) black point 0.071 (0.066); white point 1.9e+02 (2.1e+02)
+	One-in predicted black point 0.21 (0.26); white point 1.4e+02 (1.7e+02)
+
+Dataset FullGlossyfull3 Average 
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.19, offset = -0.035, log10 gain change = 1.4, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.1, offset = -2.1, log10 gain change = 1.7, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.16, offset = -0.18, log10 gain change = 1.7, log10 effective offset = -2.1, rmax = 1, exp = 1.4
+	Predicted (actual) black point 0.052 (0.057); white point 1.7e+02 (2.1e+02)
+	One-in predicted black point 0.12 (0.096); white point 1.2e+02 (1.2e+02)
+
+Dataset FullGlossyfull4 ajh
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.23, offset = -0.035, log10 gain change = 1.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.12, offset = -1.9, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.17, offset = -0.24, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 1.5
+	Predicted (actual) black point 0.017 (0.019); white point 1.3e+02 (2.2e+02)
+	One-in predicted black point 0.085 (0.06); white point 98 (1.5e+02)
+
+Dataset FullGlossyfull4 arp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.31, offset = -0.035, log10 gain change = 1.2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.16, offset = -1.3, log10 gain change = 1.5, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.26, offset = -0.088, log10 gain change = 1.5, log10 effective offset = -2.1, rmax = 1, exp = 1.4
+	Predicted (actual) black point 0.041 (0.058); white point 1.1e+02 (1.5e+02)
+	One-in predicted black point 0.078 (0.045); white point 81 (1.1e+02)
+
+Dataset FullGlossyfull4 kjn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.25, offset = -0.035, log10 gain change = 1.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.12, offset = -1.7, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.2, offset = -0.13, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 1.3
+	Predicted (actual) black point 0.014 (0.012); white point 1.8e+02 (2.2e+02)
+	One-in predicted black point 0.057 (0.12); white point 1.3e+02 (1.5e+02)
+
+Dataset FullGlossyfull4 orp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.26, offset = -0.035, log10 gain change = 1.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.15, offset = -1.4, log10 gain change = 1.5, log10 effective offset = -2.2, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.29, offset = 0.074, log10 gain change = 1.5, log10 effective offset = -2.2, rmax = 1, exp = 1.2
+	Predicted (actual) black point 0.16 (0.091); white point 1.5e+02 (1.5e+02)
+	One-in predicted black point 0.18 (0.26); white point 1e+02 (NaN)
+
+Dataset FullGlossyfull4 rvn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.19, offset = -0.035, log10 gain change = 1.4, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.11, offset = -2, log10 gain change = 1.7, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.19, offset = -0.042, log10 gain change = 1.7, log10 effective offset = -2.1, rmax = 1, exp = 1.3
+	Predicted (actual) black point 0.13 (0.082); white point 1.6e+02 (1.8e+02)
+	One-in predicted black point 0.18 (0.26); white point 1.2e+02 (1.5e+02)
+
+Dataset FullGlossyfull4 Average 
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.24, offset = -0.035, log10 gain change = 1.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.13, offset = -1.7, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.21, offset = -0.12, log10 gain change = 1.6, log10 effective offset = -2.1, rmax = 1, exp = 1.4
+	Predicted (actual) black point 0.046 (0.04); white point 1.4e+02 (1.8e+02)
+	One-in predicted black point 0.093 (0.12); white point 1e+02 (1.4e+02)
+
+Dataset Full30Glossyfull3 ajh
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.026, offset = -3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.043, offset = 3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 1.9
+	Predicted (actual) black point 5.5 (NaN); white point 2.8e+02 (3e+02)
+	One-in predicted black point 5.9 (NaN); white point 2.2e+02 (2.4e+02)
+
+Dataset Full30Glossyfull3 arp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.025, offset = -0.29, log10 gain change = 2.3, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.032, offset = 5.9, log10 gain change = 2.3, log10 effective offset = -1.5, rmax = 1, exp = 2.6
+	Predicted (actual) black point 11 (NaN); white point 1.9e+02 (2.4e+02)
+	One-in predicted black point 12 (NaN); white point 1.7e+02 (2e+02)
+
+Dataset Full30Glossyfull3 kjn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.027, offset = -3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.06, offset = 8.6, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 1.7
+	Predicted (actual) black point 9.7 (NaN); white point 2.7e+02 (2.6e+02)
+	One-in predicted black point 9.9 (NaN); white point 2.1e+02 (2.2e+02)
+
+Dataset Full30Glossyfull3 orp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.037, offset = -3.5, log10 gain change = 2.1, log10 effective offset = -2.1, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.13, offset = 7.9, log10 gain change = 2.1, log10 effective offset = -2.1, rmax = 1, exp = 1.3
+	Predicted (actual) black point 8.1 (NaN); white point 2.6e+02 (2.6e+02)
+	One-in predicted black point 8.1 (NaN); white point 1.9e+02 (1.9e+02)
+
+Dataset Full30Glossyfull3 rvn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.025, offset = -3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.042, offset = 7.7, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 2.1
+	Predicted (actual) black point 10 (NaN); white point 2.3e+02 (2.2e+02)
+	One-in predicted black point 11 (NaN); white point 1.9e+02 (2.1e+02)
+
+Dataset Full30Glossyfull3 Average 
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.027, offset = -3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.063, offset = 11, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 1.7
+	Predicted (actual) black point 12 (NaN); white point 2.5e+02 (2.6e+02)
+	One-in predicted black point 12 (NaN); white point 2e+02 (2.1e+02)
+
+Dataset Full30Glossyfull4 ajh
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.033, offset = -3.5, log10 gain change = 2.2, log10 effective offset = -1.9, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.073, offset = 4.2, log10 gain change = 2.2, log10 effective offset = -1.9, rmax = 1, exp = 1.6
+	Predicted (actual) black point 4.9 (NaN); white point 2.6e+02 (2.9e+02)
+	One-in predicted black point 5.1 (NaN); white point 2e+02 (1.9e+02)
+
+Dataset Full30Glossyfull4 arp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.025, offset = -3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.052, offset = 14, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 1.9
+	Predicted (actual) black point 16 (NaN); white point 2.2e+02 (2.6e+02)
+	One-in predicted black point 16 (NaN); white point 1.8e+02 (1.8e+02)
+
+Dataset Full30Glossyfull4 kjn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.027, offset = -3.5, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.054, offset = 4.9, log10 gain change = 2.3, log10 effective offset = -1.8, rmax = 1, exp = 1.6
+	Predicted (actual) black point 6 (NaN); white point 3.1e+02 (3.1e+02)
+	One-in predicted black point 6.3 (NaN); white point 2.4e+02 (2.3e+02)
+
+Dataset Full30Glossyfull4 orp
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.053, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.049, offset = -3.5, log10 gain change = 2, log10 effective offset = -3.7, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.42, offset = 9.3, log10 gain change = 2, log10 effective offset = -3.7, rmax = 1, exp = 1
+	Predicted (actual) black point 9.4 (NaN); white point 2.3e+02 (2.1e+02)
+	One-in predicted black point 9.4 (NaN); white point 1.5e+02 (1.6e+02)
+
+Dataset Full30Glossyfull4 rvn
+	Reference params: gain = 4.9, offset = -0.035, rmax = 1, exp = 3
+	Gain only model: gain = 0.049, offset = -0.035, log10 gain change = 2, log10 effective offset = -1.5, rmax = 1, exp = 3
+	Gain/Offset model: gain = 0.029, offset = -3.5, log10 gain change = 2.2, log10 effective offset = -1.8, rmax = 1, exp = 3
+	Gain/Offset/Exp model: gain = 0.068, offset = 8.3, log10 gain change = 2.2, log10 effective offset = -1.8, rmax = 1, exp = 1.6
+	Predicted (actual) black point 9.2 (NaN); white point 2.6e+02 (2.7e+02)
+	One-in predicted black point 9.4 (NaN); white point 2e+02 (2.1e+02)

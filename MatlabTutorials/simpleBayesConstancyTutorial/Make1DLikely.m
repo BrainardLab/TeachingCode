@@ -1,0 +1,1 @@
+function Z = Make1DLikely(X,Y,u,K);[m,n] = size(X);Z = zeros(size(X));for i = 1:m	for j = 1:n		if (length(u) == 1)			arg = [X(i,j)]';		else			arg = [X(i,j) Y(i,j)]';		end		Z(i,j) = MultiNormalPDF(arg,u,K);	endend
