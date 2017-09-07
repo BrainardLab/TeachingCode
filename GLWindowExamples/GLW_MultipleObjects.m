@@ -1,21 +1,24 @@
 function GLW_MultipleObjects(fullScreen)
-% GLW_MultipleObjects - Demonstrates showing multiple objects with GLWindow.
+% GLW_MultipleObjects  Demonstrates showing multiple objects with GLWindow.
 %
 % Syntax:
-% GLW_MultipleObjects
-% GLW_MultipleObjects(fullScreen)
+%     GLW_MultipleObjects
+%     GLW_MultipleObjects(false)
 %
 % Description:
-% This example shows the basics of showing multiple objects with GLWindow.
-% Demonstrates how to enable/disable objects, which determines whether
-% they're drawn or not.  'h' toggles the oval on/off, 'q' exits the
-% program, 'p' randomly changes the oval's position, and all other keys
-% randomly change the object colors.
+%     This example shows the basics of showing multiple objects with GLWindow.
+%     Demonstrates how to enable/disable objects, which determines whether
+%     they're drawn or not.
+%
+%     Press - 'h' to toggle the oval on and off
+%           - 'p' to change the oval's position
+%           - 'q' to quit
+%           - any other key to randomly change the object colors.
 %
 % Input:
-% fullScreen (logical) - If true, the last screen attached to the computer
-%     will be opened in fullscreen mode.  If false, a regular window is opened
-%     on the main screen.  Defaults to false.
+%     fullScreen (logical) - If true, the last screen attached to the computer
+%         will be opened in fullscreen mode.  If false, a regular window is opened
+%         on the main screen.  Defaults to true.
 
 if ~exist('fullScreen', 'var')
 	fullScreen = true;

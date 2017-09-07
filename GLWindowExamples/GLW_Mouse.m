@@ -1,22 +1,26 @@
 function GLW_Mouse(fullScreen)
-% GLW_Mouse - Shows how to capture/set the mouse with GLWindow.
+% GLW_Mouse  Shows how to capture/set the mouse with GLWindow.
 %
 % Syntax:
-% GLW_Mouse
-% GLW_Mouse(fullScreen)
+%   GLW_Mouse
+%   GLW_Mouse(false)
 %
 % Description:
-% Demonstrates how to capture mouse position and button clicks and how to
-% set the mouse position while using GLWindow.  Mouse functionality is
-% provided by the MGL libraries.  At the beginning of the program the mouse
-% is forced to the middle of the display. Clicking the mouse prints out the
-% RGB value of the pixel that was clicked if using the system mouse cursor.
-% If the rendered cursor is enabled, detection of the pixel values isn't
-% possible without doing some geometry calculations or reading non RGB pixel
-% data, which this example doesn't get into.
+%     Demonstrates how to capture mouse position and button clicks and how to
+%     set the mouse position while using GLWindow.  Mouse functionality is
+%     provided by the MGL libraries.  At the beginning of the program the mouse
+%     is forced to the middle of the display. Clicking the mouse prints out the
+%     RGB value of the pixel that was clicked if using the system mouse cursor.
+%
+%     If the rendered cursor is enabled, detection of the pixel values isn't
+%     possible without doing some geometry calculations or reading non RGB pixel
+%     data, which this example doesn't get into.
+%
+%     Bring the cursor back into the Matlab command window and hit 'q' to
+%     quit.
 %
 % Input:
-% fullScreen (logical) - Toggles fullscreen mode on/off.  Defaults to on.
+%     fullScreen (logical) - Toggles fullscreen mode on/off.  Defaults to true.
 
 % This global lets us access some low level OpenGL values.
 global GL;
@@ -63,7 +67,10 @@ try
 	% Flag to keep track of mouse button state.
 	alreadyPressed = false;
 	
-	% Force the mouse to the center of the screen.
+	% Force the mouse to the center of the screen.  The mouse coordinate
+	% system is in pixels, with lower left as 0,0 and increasing to the
+	% right and upwards.  This coordinate system differs from that used to
+    % draw objects, which we agree is irritating.
 	fprintf('- Moving mouse to center of the display.\n');
 	mglSetMousePosition(screenDimsPx(1)/2, screenDimsPx(2)/2, win.WindowID);
 	
@@ -93,11 +100,13 @@ try
 					% To do this we make a low level OpenGL call to read pixels
 					% straight from the framebuffer.  This call also returns
 					% the alpha (transparency) value as the 4th value in the
-					% return vector.
-					glReadBuffer(GL.FRONT);
-					pxRGBA = squeeze(glReadPixels(mouseInfo.x, mouseInfo.y, 1, 1, GL.RGB, GL.UNSIGNED_BYTE)) / 255;
-					fprintf('- Pixel RGB: [%g, %g, %g]\n', pxRGBA(1), pxRGBA(2), pxRGBA(3));
-					glReadBuffer(GL.BACK);
+                    % return vector.
+                    if (mouseInfo.x > 0 & mouseInfo.y > 0)
+                        glReadBuffer(GL.FRONT);
+                        pxRGBA = squeeze(glReadPixels(mouseInfo.x, mouseInfo.y, 1, 1, GL.RGB, GL.UNSIGNED_BYTE)) / 255;
+                        fprintf('- Pixel at position %0.1f, %0.1f in RGB: [%g, %g, %g]\n', mouseInfo.x, mouseInfo.y ,pxRGBA(1), pxRGBA(2), pxRGBA(3));
+                        glReadBuffer(GL.BACK);
+                    end
 				else
 					fprintf('- Mouse clicked at pixel (%d, %d)\n', mouseInfo.x, mouseInfo.y);
 				end

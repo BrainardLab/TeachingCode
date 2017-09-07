@@ -1,14 +1,19 @@
 function GLW_Gabor
-% GLW_Gabor
+% GLW_Gabor  Demonstrates how to show a gabor patch in GLWindow.
 %
-% Demonstrates how to show a gabor patch in GLWindow.
+% Syntax:
+%     GLW_Gabor
 %
-% The function createGabor at the end does the work of
-% creating the gabor patch. 
+% Description:
+%     The function createGabor at the end does the work of
+%     creating the gabor patch. 
 % 
-% Also demonstrated is how to use the PTB calibration routines
-% to gamma correct the gabor.
+%     Also demonstrated is how to use the PTB calibration routines
+%     to gamma correct the gabor.
 %
+%     Press - 'd' to dump image of window into a file
+%           - 'q' to quit
+
 % 12/5/12  dhb  Wrote it from code lying around, in part due to Adam Gifford.
 
 try 

@@ -1,21 +1,22 @@
 function GLW_Basic2(fullScreen)
-% GLW_Basic2 - More advanced variation of GLW_Basic.m, with a rectangle 
-% instead of an oval.
+% GLW_Basic2 - More advanced variation of GLW_Basic.m, with a rectangle instead of an oval
 %
 % Syntax:
-% GLW_Basic2
-% GLW_Basic2(fullScreen)
+%     GLW_Basic2
+%     GLW_Basic2(false)
 %
 % Description:
-% Shows more settings of GLWindow including SceneDimensions and BackgroundColor.
-% Opens a window and displays a rectangle.  Press 'b' to randomly set the
-% background color, 'q' to quit, and any other key to randomly change the
-% rectangle's color.
+%     Shows more settings of GLWindow including SceneDimensions and BackgroundColor.
+%     a window and displays a rectangle.
+%
+%     Press - 'b' to randomly set the background color
+%           - 'q' to quit
+%           - any other key to randomly change the rectangle's color.
 %
 % Input:
-% fullScreen (logical) - If true, the last screen attached to the computer
-%     will be opened in fullscreen mode.  If false, a regular window is opened
-%     on the main screen.  Defaults to true.
+%     fullScreen (logical) - If true, the last screen attached to the computer
+%         will be opened in fullscreen mode.  If false, a regular window is opened
+%         on the main screen.  Defaults to true.
 
 error(nargchk(0, 1, nargin));
 

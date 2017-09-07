@@ -1,18 +1,19 @@
 function GLW_Basic(fullScreen)
-% GLW_Basic - Simple demonstration of using GLWindow .
+% GLW_Basic - Simple demonstration of using GLWindow
 %
 % Syntax:
-% GLW_Basic
-% GLW_Basic(fullScreen)
+%     GLW_Basic
+%     GLW_Basic(false)
 %
 % Description:
-% Opens a window and displays a red oval.  Press any key to exit the
-% demo.
+%     Opens a window and displays a red oval.
+%
+%     Press any key to exit the demo.
 %
 % Input:
-% fullScreen (logical) - If true, the last screen attached to the computer
-%     will be opened in fullscreen mode.  If false, a regular window is opened
-%     on the main screen.  Defaults to true.
+%     fullScreen (logical) - If true, the last screen attached to the computer
+%         will be opened in fullscreen mode.  If false, a regular window is opened
+%         on the main screen.  Defaults to true.
 
 % Check input arguments
 error(nargchk(0, 1, nargin));

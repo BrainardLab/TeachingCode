@@ -1,18 +1,23 @@
 function GLW_Text(fullScreen)
-% GLW_Text - Demonstrates how to show text with GLWindow.
+% GLW_Text  Demonstrates how to show text with GLWindow
 %
 % Syntax:
-% GLW_Text
-% GLW_Text(fullScreen)
+%     GLW_Text
+%     GLW_Text(fullScreen)
 %
 % Description:
-% Opens a window and shows the string 'red' on the screen.  Pressing 'r'
-% changes the text to a random color word.  'q' quits the program.
+%     Opens a window and shows the string 'red' on the screen.
+%
+%     Press - 'r' to change the word
+%           - 'c' to change the color of the text
+%           - 'e' to enable the text (i.e. display it)
+%           - 'd' to disable the text (i.e. hide it)
+%           - 'q' to quit
 %
 % Input:
-% fullScreen (logical) - If true, the last screen attached to the computer
-%     will be opened in fullscreen mode.  If false, a regular window is opened
-%     on the main screen.  Defaults to false.
+%     fullScreen (logical) - If true, the last screen attached to the computer
+%         will be opened in fullscreen mode.  If false, a regular window is opened
+%         on the main screen.  Defaults to true.
 
 error(nargchk(0, 1, nargin));
 

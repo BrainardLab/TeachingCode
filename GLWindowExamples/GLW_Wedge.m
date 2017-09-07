@@ -1,16 +1,17 @@
 function GLW_Wedge(fullScreen)
-% GLW_Wedge - GLWindow example showing how to create wedges.
+% GLW_Wedge  GLWindow example showing how to create wedges.
 %
 % Syntax:
-% GLW_Wedge
-% GLW_Wedge(fullScreen)
+%     GLW_Wedge
+%     GLW_Wedge(false)
 %
 % Description:
-% Shows how to use GLWindow to create wedges of different sizes and colors.
-% Press any key to quit.
+%     Shows how to use GLWindow to create wedges of different sizes and colors.
+%
+%     Press any key to quit.
 %
 % Input:
-% fullScreen (logical) - Toggles fullscreen mode.  Default to true.
+%     fullScreen (logical) - Toggles fullscreen mode.  Default to true.
 
 if nargin == 0
 	fullScreen = true;

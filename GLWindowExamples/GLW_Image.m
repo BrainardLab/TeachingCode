@@ -1,16 +1,23 @@
 function GLW_Image(fullScreen)
-% GLW_Image - GLWindow example to show image rendering.
+% GLW_Image  GLWindow example to show image rendering.
 %
 % Syntax:
-% GLW_Image
-% GLW_Image(fullScreen)
+%   GLW_Image
+%   GLW_Image(false)
 %
 % Description:
-% GLWindow example showing how to display an image either from an image
-% file on disk or from a generated matrix.
+%     GLWindow example showing how to display an image either from an image
+%     file on disk or from a generated matrix.
+%
+%     Press - 'b' to randomly set the background color%
+%           - 't' to turn both images on
+%           - 's' swap images
+%           - 'd' save image on screen to a file
+%           - 'q' to quit
+%           - any other key to randomly change the rectangle's color.
 %
 % Input:
-% fullScreen (logical) - Toggles fullscreen mode on/off.  Defaults to on.
+%     fullScreen (logical) - Sets fullscreen mode on/off.  Defaults to true.
 
 if ~exist('fullScreen', 'var')
 	fullScreen = true;
@@ -25,7 +32,9 @@ try
 		'SceneDimensions', [48 30]); % These are the approximate dimensions 
 									 % (cm) of a wide screen.
 	
-	% Add our first image from a file.
+	% Add our first image from a file.  The first argument is the center
+    % position of the image, the second the size of the rectangle it gets
+    % mapped into.
 	win.addImageFromFile([0 0], [20 20], 'loldog.bmp', 'Name', ...
 		'loldog');
 	
