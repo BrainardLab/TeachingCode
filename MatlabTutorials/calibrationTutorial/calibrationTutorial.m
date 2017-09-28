@@ -9,6 +9,7 @@
 %          dhb      Initialize min_diff for each of three guns.
 % 12/02/09 dhb      Fix up some bugs because we're now in the 0-1 world, not DAC values.
 % 05/27/10 dhb      Prompt for input file, simplify logic and checks.
+% 09/28/17 dhb      Update savefig->FigureSave and new location of S in cal structure.
 
 %% Clear
 clear; close all;
@@ -16,7 +17,8 @@ clear; close all;
 %% Load a test calibration file
 cal = GetCalibrationStructure('\nEnter a calibration filename','FrontRoomLex',[]);
 
-S = cal.S_device;
+% Get wavelength sampling of functions in cal file.
+S = cal.describe.S;
 
 %% Plot the ambient light
 figure(1);
@@ -39,7 +41,7 @@ plot(SToWls(cal.S_ambient),bluePhosphor,'b','LineWidth',3);
 title( 'Monitor channel spectra','FontSize',24);
 xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / nm ]','FontSize',24);
 hold off
-savefig('MonitorSpectra',gcf,'pdf');
+FigureSave('MonitorSpectra',gcf,'pdf');
 
 %% Plot the gamma curves
 % 14 bit display => 16384 input levels
@@ -56,7 +58,7 @@ plot(gammaInput,blueGamma,'b','LineWidth',3);
 title( 'Monitor gamma curves','FontSize',24);
 xlabel( 'Input RGB','FontSize',24); ylabel( 'Normalized Output','FontSize',24);
 hold off
-savefig('MonitorGamma',gcf,'pdf');
+FigureSave('MonitorGamma',gcf,'pdf');
 
 %% Plot the human cones.
 %
@@ -71,7 +73,7 @@ plot(SToWls(S_cones_ss2),T_cones_ss2(3,:),'b','LineWidth',3);
 title( 'LMS Cone Fundamentals','FontSize',24);
 xlabel( 'Wavelength','FontSize',24); ylabel( 'Sensitivity','FontSize',24);
 hold off
-savefig('ConeFundamentals',gcf,'pdf');
+FigureSave('ConeFundamentals',gcf,'pdf');
 
 %% Get and plot the XYZ color matching functions.  See "help PsychColorimetricMatFiles'
 load T_xyz1931
