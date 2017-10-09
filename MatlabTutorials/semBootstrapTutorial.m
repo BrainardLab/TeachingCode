@@ -123,13 +123,13 @@ simulatedSEMs = simulatedSds/sqrt(nExperimentDraws);
 semFig = figure; clf;
 subplot(2,1,1); hold on
 nBins = 10;
-[n,bins] = hist(simulatedSEMs,nBins);
-bar(bins,n);
-minX = min(bins)-(bins(2)-bins(1)); maxX = max(bins)+(bins(2)-bins(1));
+[n,semBins] = hist(simulatedSEMs,nBins);
+bar(semBins,n);
+minX = min(semBins)-(semBins(2)-semBins(1)); maxX = max(semBins)+(semBins(2)-semBins(1));
 plot([theoreticalSd/sqrt(nExperimentDraws) theoreticalSd/sqrt(nExperimentDraws)],[0 max(n)],'r','LineWidth',3);
 plot([mean(simulatedSEMs) mean(simulatedSEMs)],[0 max(n)],'g','LineWidth',3);
 
-xlabel('Simulated SEM'); ylabel('N'); title('Distribution of SEMs');
+xlabel('Theoretical SEM'); ylabel('N'); title('Distribution of SEMs');
 xlim([minX,maxX]);
 
 %% Bootstrapping procedure
@@ -161,9 +161,8 @@ end
 % can be of interest when the distribution of estimates is not
 % approximately normal.  [This is not done here.]
 subplot(2,1,2); hold on
-nBins = 10;
-[n,bins] = hist(bootstrapEstimatesOfPrecision,nBins);
-bar(bins,n);
+[n] = hist(bootstrapEstimatesOfPrecision,semBins);
+bar(semBins,n);
 plot([theoreticalSd/sqrt(nExperimentDraws) theoreticalSd/sqrt(nExperimentDraws)],[0 max(n)],'r','LineWidth',3);
 plot([mean(bootstrapEstimatesOfPrecision) mean(bootstrapEstimatesOfPrecision)],[0 max(n)],'g','LineWidth',3);
 xlabel('Boostrapped Precision of Mean'); ylabel('N'); title('Bootstrap');
