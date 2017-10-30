@@ -1,5 +1,5 @@
 function psychofitTutorial
-% psychofitTutorial
+% psychofitTutorial2014
 %
 % Show basic use of psignifit and Palamedes toolboxes to simulate and
 % fit psychophysical data.  Has cases for Y/N and TAFC, and shows 
@@ -11,6 +11,10 @@ function psychofitTutorial
 % You need both the psignifit and Palamedes toolboxes on your path, as well
 % as the Brainard lab staircase class and the Psychtoolbox.
 %
+% * [NOTE: DHB - This is a somewhat outdated version, as both psignifit and
+%   Palamedes have changed since this was written. And, it does not use
+%   mQUESTPlus. Starting to update parts in a new version today, 
+
 % 4/30/09  dhb  Wrote it.
 % 10/18/09 dhb  Add some fits with Palamedes, just for grins
 % 10/19/09 dhb  Added TAFC example as well as Y/N.  Cleaned up and added comments.
