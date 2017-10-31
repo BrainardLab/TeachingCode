@@ -20,6 +20,7 @@ nComparisonFit = 100;
 nComparison = 10;
 nSimulate = 40;
 nComparisonSds = 4;
+thresholdCriterionCorrect = 0.75;
 
 %% Simulate TAFC psychometric function and fit.  Here the Weibull is a more natural functional
 % form, and we show its use for both toolboxes.
@@ -40,13 +41,12 @@ end
 % second parameter should be on the order of 1/2, so we just hard code that.  As with Y/N, really want to 
 % plot the fit against the data to make sure it is reasonable in practice.
 
-% Initialize
-thresholdCriterionCorrect = 0.75;
-paramsFree     = [1 1 0 1];
-PF = @PAL_Weibull;                  % Alternatives: PAL_Gumbel, PAL_Weibull, PAL_CumulativeNormal, PAL_HyperbolicSecant
-PFI = @PAL_inverseWeibull;
+% Define what psychometric functional form to fit.
+%
+% Alternatives: PAL_Gumbel, PAL_Weibull, PAL_CumulativeNormal, PAL_HyperbolicSecant
+PF = @PAL_Weibull;                  
 
-% The first two parameters define the shape of teh Weibull function.
+% The first two parameters of the Weibull define its shape.
 %
 % The third is the guess rate, which determines the value the function
 % takes on at x = 0.  For TAFC, this should be locked at 0.5.
