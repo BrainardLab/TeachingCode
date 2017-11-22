@@ -8,7 +8,7 @@ function psychofitTutorialTAFCStaircase
 % 10/30/17 dhb  Separated out and updated.
 
 %% Clear
-clear; close all; clear classes;
+clear; close all;
 
 %% Specify precision as noise of a Gaussian variable
 %
