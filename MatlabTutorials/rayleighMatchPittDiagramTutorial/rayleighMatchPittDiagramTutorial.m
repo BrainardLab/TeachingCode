@@ -70,17 +70,23 @@ for kk = 1:size(lambdaMaxes,2)
     % Most operating parameters are set in the function itself.
     [testIntensity{kk},mixingRatio{kk},matchDiff{kk}] = ComputeConfusions(lambdaMax,testIntensityRange,mixingRatioRange);
     
-    % %% Plot
-    % figure; clf; hold on
-    % mesh(mixingRatio{kk},testIntensity{kk},matchDiff{kk});
-    % colormap(winter)
-    % view([2 14]);
-    % zlim([0 1]);
-    % xlim([min(mixingRatioRange) max(mixingRatioRange)]);
-    % ylim([min(testIntensityRange) max(testIntensityRange)]);
-    % xlabel('Mixing Ratio');
-    % ylabel('Test Intensity');
-    % zlabel('Color Difference');
+    % This plot will show the color difference as a function of mixing ratio
+    % and test intensity, one plot per set of lambda max values.  I found these 
+    % useful for development but not all that instructive in the end, so
+    % they conditional and off by default.
+    diffPlots = false;
+    if (diffPlots)
+        figure; clf; hold on
+        mesh(mixingRatio{kk},testIntensity{kk},matchDiff{kk});
+        colormap(winter)
+        view([2 14]);
+        zlim([0 2]);
+        xlim([min(mixingRatioRange) max(mixingRatioRange)]);
+        ylim([min(testIntensityRange) max(testIntensityRange)]);
+        xlabel(' Mixing Ratio (0 -> green; 1 -> red)');
+        ylabel('Test Intensity');
+        zlabel('Color Difference');
+    end
     
     figure(theFigure);
     index = find(matchDiff{kk} < thresholdVal);
@@ -92,7 +98,7 @@ end
 figure(theFigure);
 xlim([min(mixingRatioRange) max(mixingRatioRange)]);
 ylim([min(testIntensityRange) max(testIntensityRange)]);
-xlabel('Green to Red Mixing Ratio');
+xlabel(' Mixing Ratio (0 -> green; 1 -> red)');
 ylabel('Test Intensity');
 axis('square')
 legend(theLegend);
