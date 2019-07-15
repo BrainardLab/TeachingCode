@@ -181,7 +181,7 @@ end
 % can be checked against the numbers that were input
 % and should match.
 %
-% The CCT doesn't agree with what SV outputs, however.
+% The CCT doesn't agree with what SV outputs, however.cd 
 % This may be a bug in SV, in cct, or a fact that the
 % standard is a bit underspecified.
 predictedWhiteXYZ = SettingsToSensor(cal,[1 1 1]');
