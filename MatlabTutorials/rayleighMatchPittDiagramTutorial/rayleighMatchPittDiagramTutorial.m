@@ -25,12 +25,17 @@
 
 % History
 %   07/03/19  dhb  Wrote it.
+%   09/03/19  dhb, dce  Modified to use Asano et al. individual difference
+%                       parameters, but in the end does the same thing.
+%                       However, and enterprising person can now examine
+%                       the effect of changing photopigment density.
 
 %% Clear
 clear; close all;
 
 %% Parameters
 %
+
 % Cone lambda max.  Set two of them to be the same
 % to create a dichromat, etc.
 lambdaMaxes = [  ...
@@ -40,8 +45,43 @@ lambdaMaxes = [  ...
     [539   530.3 420.7]' ...   % Protanomalous
     [500   500   500  ]' ...   % Rod monochromat
     [558.9 530.3 420.7]'];     % Normal trichromat
+
+% We actually specify the cones as a shift relative to a 
+% nomogram generated lambda max.  These base values are given
+% here.  If you make this match the above, then all shifts
+% end up as zero.  But you can specify deviations, and control
+% what the shift is relative to.
+baseLambdaMaxes = [ ...
+    [558.9 558.9 420.7]' ...   % Deutan (two L cones, no M)
+    [530.3 530.3 420.7]' ...   % Protan (two M coens, no L)
+    [558.9 550   420.7]' ...   % Deuteranomalous
+    [539   530.3 420.7]' ...   % Protanomalous
+    [500   500   500  ]' ...   % Rod monochromat
+    [558.9 530.3 420.7]'];     % Normal trichromat
+
+% You can also allow the specified photopigment density to
+% vary.  Enter these as percent changes relative to nominal
+% values. Can be positive or negative.
+dphotopigments = [  ...
+    [0 0 0]' ...   
+    [0 0 0]' ...   
+    [0 0 0]' ...   
+    [0 0 0]' ...   
+    [0 0 0]' ...  
+    [0 0 0]'];     
 theColors = [ 'r' 'g' 'b' 'y' 'c' 'k'];
 theLegend = {'D' 'P' 'DA' 'PA' 'RMC' 'N'};
+
+% Convert specified lambda max values to shifts from the nominal CIE
+% standard values.
+nominalLambdaMax = [558.9 530.3 420.7];
+for ii = 1:size(lambdaMaxes,2)
+    indDiffParams(ii).dlens= 0;
+    indDiffParams(ii).dmac = 0;
+    indDiffParams(ii).dphotopigment = dphotopigments(:,ii)';
+    indDiffParams(ii).lambdaMaxShift = lambdaMaxes(:,ii)' - baseLambdaMaxes(:,ii)';
+    indDiffParams(ii).shiftType = 'linear';
+end
 
 % Threshold difference below which it is a match
 % Fussed with this by hand to adjust plot to taste.
@@ -63,12 +103,12 @@ mixingRatioRange = 0.1:0.001:1;
 theFigure = figure; clf; hold on
 for kk = 1:size(lambdaMaxes,2)
     
-    lambdaMax = lambdaMaxes(:,kk);
+    %lambdaMax = lambdaMaxes(:,kk);
 
     
     % Function below does the work, based on lambdaMax.
     % Most operating parameters are set in the function itself.
-    [testIntensity{kk},mixingRatio{kk},matchDiff{kk}] = ComputeConfusions(lambdaMax,testIntensityRange,mixingRatioRange);
+    [testIntensity{kk},mixingRatio{kk},matchDiff{kk}] = ComputeConfusions(baseLambdaMaxes(:,kk),indDiffParams(kk),testIntensityRange,mixingRatioRange);
     
     % This plot will show the color difference as a function of mixing ratio
     % and test intensity, one plot per set of lambda max values.  I found these 
@@ -108,7 +148,7 @@ FigureSave('pittDiagram.pdf',theFigure,'pdf');
 % Compute locus of confusions in intensity-ratio plot
 %
 % Syntax:
-%    [testIntensity,mixingRatio,matchDiff] = ComputeConfusions(lambdaMax,testIntensityRange,mixingRatioRange)
+%    [testIntensity,mixingRatio,matchDiff] = ComputeConfusions(lambdaMax,indDiffParams,testIntensityRange,mixingRatioRange)
 %
 % Description:
 %    Take lambdaMax values and generate receptor fundamentals. Then loop
@@ -129,6 +169,12 @@ FigureSave('pittDiagram.pdf',theFigure,'pdf');
 % Inputs:
 %    lambdaMax                 Column vector of three receptor photopigment lambda
 %                              max (wavelength of peak sensitivity) values, in nm.
+%    indDiffParams             Passed to ComputeCIEConeFundamentals.
+%                              Ignored if empty.  If you pass this
+%                              structure, then lambdaMax should be empty,
+%                              and vice-versa.  That is, only adjust the
+%                              fundamentals using one of the two available
+%                              methods.
 %    testIntensityRange        Row vector of test intensities.  Arbitrary
 %                              units.  Values between 0 and 1 are about
 %                              right given the way the other parameters are
@@ -154,7 +200,12 @@ FigureSave('pittDiagram.pdf',theFigure,'pdf');
 % History:
 %   07/04/19  dhb  Made this its own routine.
 
-function [testIntensity,mixingRatio,matchDiff] = ComputeConfusions(lambdaMax,testIntensityRange,mixingRatioRange)
+function [testIntensity,mixingRatio,matchDiff] = ComputeConfusions(lambdaMax,indDiffParams,testIntensityRange,mixingRatioRange)
+
+% Check
+% if (~isempty(indDiffParams) & ~isempty(lambdaMax))
+%     error('Don''t risk using two different ways to adjust cone fundamentals.');
+% end
 
 % Observer parameters
 fieldSizeDegs = 2;
@@ -206,10 +257,22 @@ matchSpectrum2 = zeros(size(wls)); matchSpectrum2(matchIndex2) = matchIntensity2
 %
 % See ComputeCIEConeFundamentals for more info, and for other ways to shift
 % individual difference parameters.
-T_cones = EnergyToQuanta(S,ComputeCIEConeFundamentals(S,fieldSizeDegs,observerAge,pupilDiameterMM,lambdaMax)')';
+T_cones = EnergyToQuanta(S, ...
+    ComputeCIEConeFundamentals(S,fieldSizeDegs,observerAge,pupilDiameterMM,lambdaMax, ...
+        [],[],[],[],[],indDiffParams)')';
+
 for ii = 1:size(T_cones,1)
     T_cones(ii,:) = T_cones(ii,:)/max(T_cones(ii,:));
 end
+
+% Make diagnostic plot of cone fundamentals?
+FUNDAMENTAL_PLOTS = true;
+figure; clf; hold on;
+plot(SToWls(S),T_cones(1,:),'r','LineWidth',2);
+plot(SToWls(S),T_cones(2,:),'g','LineWidth',2);
+plot(SToWls(S),T_cones(3,:),'b','LineWidth',2);
+xlabel('Wavelength');
+ylabel('Fundamental');
 
 % Compute cone respones to test and match
 %
