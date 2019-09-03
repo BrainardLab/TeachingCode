@@ -264,7 +264,7 @@ for ii = 1:size(T_cones,1)
 end
 
 % Make diagnostic plot of cone fundamentals?
-FUNDAMENTAL_PLOTS = true;
+FUNDAMENTAL_PLOTS = false;
 figure; clf; hold on;
 plot(SToWls(S),T_cones(1,:),'r','LineWidth',2);
 plot(SToWls(S),T_cones(2,:),'g','LineWidth',2);
