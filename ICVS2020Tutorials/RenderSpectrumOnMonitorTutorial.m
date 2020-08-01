@@ -14,6 +14,9 @@
 % You can get the BrainardLabToolbox from
 %   https://github.com/BrainardLab/BrainardLabToolbox
 %
+% You also need the calibration file NEC_MultisyncPA241W.mat, which is in
+% the same directory as the script in the github respository.
+%
 % 08/01/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
 %                  what we wanted.
 
