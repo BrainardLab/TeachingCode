@@ -2,6 +2,18 @@
 %
 % Exercise to learn about rendering metamers on a monitor.
 %
+% This tutorial is available in the github repository
+%   https://github.com/BrainardLab/TeachingCode
+% You can either clone the respository or just download a copy from
+% that page (see green "Code" button).
+%
+% To run this, you will need both the Psychophysics Toolbox (PsychToolbox)
+% and the BrainardLabToolbox on your path.  You can get the PsychToolbox
+% from
+%   psychtoolbox.org
+% You can get the BrainardLabToolbox from
+%   https://github.com/BrainardLab/BrainardLabToolbox
+%
 % 08/01/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
 %                  what we wanted.
 
@@ -39,10 +51,10 @@ bluePhosphor = cal.processedData.P_device(:,3);
 figure(1);clf; hold on
 set(gca,'FontName','Helvetica','FontSize',18);
 plot(wls,redPhosphor,'r','LineWidth',3);
-plot(wls,greenPhosphor,'g','LineWidth',3);;
+plot(wls,greenPhosphor,'g','LineWidth',3);
 plot(wls,bluePhosphor,'b','LineWidth',3);
 title( 'Monitor channel spectra','FontSize',24);
-xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / nm ]','FontSize',24);
+xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / wlbin ]','FontSize',24);
 hold off
 
 %% Get human cone spectral sensitivities
