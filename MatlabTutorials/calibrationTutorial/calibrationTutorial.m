@@ -15,7 +15,7 @@
 clear; close all;
 
 %% Load a test calibration file
-cal = GetCalibrationStructure('\nEnter a calibration filename','FrontRoomLex',[]);
+cal = LoadCalFile('PTB3TestCal');
 
 % Get wavelength sampling of functions in cal file.
 S = cal.describe.S;
@@ -44,8 +44,6 @@ hold off
 FigureSave('MonitorSpectra',gcf,'pdf');
 
 %% Plot the gamma curves
-% 14 bit display => 16384 input levels
-nBits = 14;
 figure(3); clf; hold on
 set(gca,'FontName','Helvetica','FontSize',18);
 gammaInput = cal.gammaInput;
