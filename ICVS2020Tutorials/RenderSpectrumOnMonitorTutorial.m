@@ -94,6 +94,11 @@ hold off
 load spd_D65
 spectrumToRender = SplineSpd(S_D65,spd_D65,S)/0.75e4;
 
+% If you want a different spectrum, this is operation on the D65
+% produces a spectrum with more long wavelenght power and that renders
+% pinkish.
+% spectrumToRender = 1.5*max(spectrumToRender(:))*ones(size(spectrumToRender))-spectrumToRender;
+
 % Make a plot of the spectrum to render
 figure(3); clf; hold on
 plot(wls,spectrumToRender,'k','LineWidth',3);
