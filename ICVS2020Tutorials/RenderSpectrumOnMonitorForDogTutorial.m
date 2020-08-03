@@ -1,6 +1,8 @@
-% RenderSpectrumOnMonitorTutorial
+% RenderSpectrumOnMonitorForDogTutorial
 %
 % Exercise to learn about rendering metamers on a monitor.
+% This version is for a dichromat.  As an example, we'll use
+% the cone spectral sensitivities of the dog.
 %
 % This tutorial is available in the github repository
 %   https://github.com/BrainardLab/TeachingCode
@@ -60,44 +62,41 @@ title( 'Monitor channel spectra','FontSize',24);
 xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / wlbin ]','FontSize',24);
 hold off
 
-%% Get human cone spectral sensitivities
+%% Get animal spectral sensitivities
 %
-% Here we use the Stockman-Sharpe 2-degree fundamentals, which are also the
-% CIE fundamentals.  They are stored as a .mat file in the Psychophysics
-% Toolbox.  See "help PsychColorimetricMatFiles'.
+% Here we use the dog, a dichromat.
 %
 % By convention in the Psychtoolbox, we store sensitivities as the rows of
 % a matrix. Spline the wavelength sampling to match that in the calibration
 % file.
+%
+% T_dogrec has the dog L cone, dog S cone, and dog rod in its three
+% rows.  We only want the cones for high light level viewing.
+load T_dogrec
+T_cones = SplineCmf(S_dogrec,T_dogrec([1,2],:),S);
 load T_cones_ss2
 T_cones = SplineCmf(S_cones_ss2,T_cones_ss2,S);
+T_cones = T_cones([1,3],:);
 
 % Make a plot
 figure(2); clf; hold on
 set(gca,'FontName','Helvetica','FontSize',18);
 plot(wls,T_cones(1,:),'r','LineWidth',3);
-plot(wls,T_cones(2,:),'g','LineWidth',3);;
-plot(wls,T_cones(3,:),'b','LineWidth',3);
-title( 'LMS Cone Fundamentals','FontSize',24);
+plot(wls,T_cones(2,:),'b','LineWidth',3);
+title( 'LS Cone Fundamentals','FontSize',24);
 xlabel( 'Wavelength','FontSize',24); ylabel( 'Sensitivity','FontSize',24);
 hold off
 
 %% Get a spectrum to render
 %
-% We want to render a spectrum on the monitor so that the light coming off the monitor has
-% the same effect on the human cones as the spectrum would have.  So we
-% need a spectrum.  We'll CIE daylight D65, since we have it available.
-%
-% The spectrum we read in is too bright to render on our monitor, so we
-% also scale it down into a more reasonable range so we don't have to worry
-% about that below.
+% We want to render a spectrum on the monitor so that the light coming off
+% the monitor has the same effect on the human cones as the spectrum would
+% have.  So we need a spectrum.  We'll use a spectrum computed from CIE D65
+% that renders pinkish for a human. (See alternate spectrum in
+% RenderSpectrumOnMonitorTutorial).
 load spd_D65
 spectrumToRender = SplineSpd(S_D65,spd_D65,S)/0.75e4;
-
-% If you want a different spectrum, this is operation on the D65
-% produces a spectrum with more long wavelenght power and that renders
-% pinkish.
-% spectrumToRender = 1.5*max(spectrumToRender(:))*ones(size(spectrumToRender))-spectrumToRender;
+spectrumToRender = 1.5*max(spectrumToRender(:))*ones(size(spectrumToRender))-spectrumToRender;
 
 % Make a plot of the spectrum to render
 figure(3); clf; hold on
@@ -116,49 +115,53 @@ xlabel('Wavelength','FontSize',24); ylabel( 'Power','FontSize',24);
 % Implicit here is that the units of spectrum give power per wavelength
 % sampling bin, another important detail you'd want to think about to get
 % units right for a real application and that we won't worry about here.
-LMSToRender = T_cones*spectrumToRender;
+LSToRender = T_cones*spectrumToRender;
 
 %% We want to find a mixture of the monitor primaries that produces the same excitations
 %
-% Let's use the column vector [r g b]' to denote the amount of each primary
-% we'll ultimately want in the mixture.  By convention we'll think of r, g,
-% and b as proportions relative to the maximum amount of each phosphor
+% Since there are only two primaries needed, we'll average the red and green
+% and treat that as a yellow primary.
+%
+% Let's use the column vector [y b]' to denote the amount of each primary
+% we'll ultimately want in the mixture.  By convention we'll think of y
+% and b as proportions relative to the maximum amount of each primary
 % available on the monitor.
 %
 % It might be useful to make a plot of the example spectrum and see that it
 % indeed looks like a mixture of the primary spectra.
-rgbExample = [0.2 0.5 0.9]';
-monitorSpectrumExample = rgbExample(1)*redPhosphor + rgbExample(2)*greenPhosphor + rgbExample(3)*bluePhosphor;
+ybExample = [0.2 0.5]';
+monitorSpectrumExample = ybExample(1)*(redPhosphor+greenPhosphor)/2 + ybExample(2)*bluePhosphor;
 
-% We can also compute the spectrum coming off the monitor for any choice of r,
-% g, and b using a matrix multiply.  In this case, think of the
-% multiplication as weighting each of the columns of cal.processedData.P_device (which
-% are the primary spectra) and then summing them.  You can verify that this
-% gives the same answer as the expanded form just above.
-monitorSpectrumExampleCheck = cal.processedData.P_device*rgbExample;
+% We can also compute the spectrum coming off the monitor for any choice of
+% y and b using a matrix multiply.  In this case, think of the
+% multiplication as weighting each of the columns of monitorBasis (defined
+% below) and then summing them.  You can verify that this gives the same
+% answer as the expanded form just above.
+monitorBasis = [(redPhosphor+greenPhosphor)/2 bluePhosphor];
+monitorSpectrumExampleCheck = monitorBasis*ybExample;
 
 % We can also compute the LMS cone excitations for this example.  This is
 % just a column vector of three numbers.
 monitorLMSExample = T_cones*monitorSpectrumExample;
 
 % Now note that we can combine the two steps above, precomputing the matrix
-% that maps between the rgb vector and the LMS excitations that result.
+% that maps between the rgb vector and the LS excitations that result.
 %
 % You can verify that monitorLMSExample and monitorLMSExampleCheck are the
 % same as each other.
-rgbToLMSMatrix = T_cones*cal.processedData.P_device;
-monitorLMSExampleCheck = rgbToLMSMatrix*rgbExample;
+ybToLSMatrix = T_cones*monitorBasis;
+monitorLMSExampleCheck = ybToLSMatrix*ybExample;
 
-% We want to go the other way, starting with LMSToRender and obtaining an
+% We want to go the other way, starting with LSToRender and obtaining an
 % rgb vector that produces it.  This is basically inverting the relation
 % above, which is easy in Matlab.
-LMSTorgbMatrix = inv(rgbToLMSMatrix);
-rgbThatRender = LMSTorgbMatrix*LMSToRender;
+LSTorgbMatrix = inv(ybToLSMatrix);
+ybThatRender = LSTorgbMatrix*LSToRender;
 
 % Let's check that it worked.  The check values here should be the same as
 % LMSToRender.
-renderedSpectrum = cal.processedData.P_device*rgbThatRender;
-LMSToRenderCheck = T_cones*renderedSpectrum;
+renderedSpectrum = monitorBasis*ybThatRender;
+LSToRenderCheck = T_cones*renderedSpectrum;
 
 % Add rendered spectrum to plot of target spectrum. You can see that they
 % are of the same overall scale but differ in relative spectra.  These two
@@ -197,7 +200,15 @@ plot(gammaInput,blueGamma,'b','LineWidth',3);
 title( 'Monitor gamma curves','FontSize',24);
 xlabel( 'Input RGB','FontSize',24); ylabel( 'Mixture rgb','FontSize',24);
 
-% We need to invert this curve - for each of our desired rgb values we need
+% We need to convert our yb values to rgb values at this point. But that's
+% easy r = g = y/2.
+rgbThatRender = [ybThatRender(1)/2 ybThatRender(1)/2 ybThatRender(2)]';
+
+% Check that this rgb does what we want
+renderedSpectrum1 = cal.processedData.P_device*rgbThatRender;
+LSToRenderCheck1 = T_cones*renderedSpectrum1;
+
+% Then we invert the RGB gamma curve - for each of our desired rgb values we need
 % to find the corresponding RGB. That's not too hard, we can just do
 % exhasutive search. This is done here in a little subfunction called
 % SimpleGammaCorrection at the bottom of this file.
@@ -219,19 +230,6 @@ for ii = 1:nPixels
 end
 figure(5);
 imshow(theImage);
-
-%% Go from RGB back to the spectrum coming off the monitor
-%
-% There will be a very small difference between rgbFromRGB and
-% rgbThatRender because the gamma correction quantizes the RGB
-% values to discrete levels. 
-rgbFromRGB(1) = SimpleGammaCorrection(redGamma,gammaInput,RGBThatRender(1));
-rgbFromRGB(2) = SimpleGammaCorrection(redGamma,gammaInput,RGBThatRender(2));
-rgbFromRGB(3) = SimpleGammaCorrection(redGamma,gammaInput,RGBThatRender(3));
-rgbFromRGB = rgbFromRGB';
-spectrumFromRGB = cal.processedData.P_device*rgbFromRGB;
-figure(3);
-plot(wls,spectrumFromRGB,'r:','LineWidth',2);
 
 function output = SimpleGammaCorrection(gammaInput,gamma,input)
 % output = SimpleGammaCorrection(gammaInput,gamma,input)
