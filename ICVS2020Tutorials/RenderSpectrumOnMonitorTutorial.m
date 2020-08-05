@@ -15,7 +15,7 @@
 %   https://github.com/BrainardLab/BrainardLabToolbox
 %
 % You also need the calibration file NEC_MultisyncPA241W.mat, which is in
-% the same directory as the script in the github respository.
+% the same directory as this tutorial in the github respository.
 %
 % 08/01/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
 %                  what we wanted.
@@ -226,8 +226,8 @@ imshow(theImage);
 % rgbThatRender because the gamma correction quantizes the RGB
 % values to discrete levels. 
 rgbFromRGB(1) = SimpleGammaCorrection(redGamma,gammaInput,RGBThatRender(1));
-rgbFromRGB(2) = SimpleGammaCorrection(redGamma,gammaInput,RGBThatRender(2));
-rgbFromRGB(3) = SimpleGammaCorrection(redGamma,gammaInput,RGBThatRender(3));
+rgbFromRGB(2) = SimpleGammaCorrection(greenGamma,gammaInput,RGBThatRender(2));
+rgbFromRGB(3) = SimpleGammaCorrection(blueGamma,gammaInput,RGBThatRender(3));
 rgbFromRGB = rgbFromRGB';
 spectrumFromRGB = cal.processedData.P_device*rgbFromRGB;
 figure(3);
