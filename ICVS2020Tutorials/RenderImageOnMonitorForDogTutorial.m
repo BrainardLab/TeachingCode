@@ -17,7 +17,10 @@
 % You also need the calibration file NEC_MultisyncPA241W.mat, which is in
 % the same directory as this script in the github respository.
 %
-% 08/03/2020  dhb  Wrote it.
+% See also: RenderSpectrumOnMonitorTutorial, RenderSpectrumOnMonitorForDogTutorial
+
+% History
+%       08/03/2020  dhb  Wrote it.
 
 %% Clear
 clear; close all;

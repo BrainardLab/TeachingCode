@@ -19,9 +19,9 @@
 % You also need the calibration file NEC_MultisyncPA241W.mat, which is in
 % the same directory as this tutorial in the github respository.
 %
-% 
+% See also: RenderSpectrumOnMonitorTutorial, RenderImageOnMonitorForDogTutorial
 
-% 08/01/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
+% 08/02/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
 %                  what we wanted.
 
 %% Clear
