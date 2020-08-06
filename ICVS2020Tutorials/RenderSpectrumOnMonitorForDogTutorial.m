@@ -1,8 +1,13 @@
 % RenderSpectrumOnMonitorForDogTutorial
 %
-% Exercise to learn about rendering metamers on a monitor.
-% This version is for a dichromat.  As an example, we'll use
-% the cone spectral sensitivities of the dog.
+% Exercise to learn about rendering metamers on a monitor. This version is
+% for a dichromat.  As an example, we'll use the cone spectral
+% sensitivities of the dog.
+%
+% Before working through this tutorial, you should work through the
+% tutorial RenderSpectrumOnMonitorTutorial.  After you understand this one,
+% you can look at RenderImageOnMonitorForDogTutorial, which applies the
+% idea to render images rather than a single spectrum.
 %
 % This tutorial is available in the github repository
 %   https://github.com/BrainardLab/TeachingCode
@@ -16,13 +21,20 @@
 % You can get the BrainardLabToolbox from
 %   https://github.com/BrainardLab/BrainardLabToolbox
 %
+% If you use the ToolboxToolbox (https://github.com/toolboxhub/toolboxtoolbox)
+% and install the TeachingCode repository in your projects folder, you can
+% install the dependencies by using
+%     tbUseProject('TeachingCode')
+% at the Matlab prompt.
+%
 % You also need the calibration file NEC_MultisyncPA241W.mat, which is in
 % the same directory as this tutorial in the github respository.
 %
 % See also: RenderSpectrumOnMonitorTutorial, RenderImageOnMonitorForDogTutorial
 
-% 08/02/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
-%                  what we wanted.
+% History:
+%    08/02/2020  dhb  Wrote for ICVS from other tutorials that weren't quite
+%                     what we wanted.
 
 %% Clear
 clear; close all;
