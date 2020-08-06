@@ -14,8 +14,27 @@
 % You can get the BrainardLabToolbox from
 %   https://github.com/BrainardLab/BrainardLabToolbox
 %
+% If you use the ToolboxToolbox (https://github.com/toolboxhub/toolboxtoolbox)
+% and install the TeachingCode repository in your projects folder, you can
+% install the dependencies by using
+%     tbUseProject('TeachingCode')
+% at the Matlab prompt.
+%
 % You also need the calibration file NEC_MultisyncPA241W.mat, which is in
 % the same directory as this tutorial in the github respository.
+%
+% There is a video that goes through this script and unpacks the
+% calculations.  It may be streamed from this link
+%     https://www.dropbox.com/s/v0ylynxteh7jc2j/RenderASpectrum.Orig.mp4?dl=0
+% and downloaded from this link
+%     https://www.dropbox.com/s/v0ylynxteh7jc2j/RenderASpectrum.Orig.mp4?dl=1
+% The downloaded version will play at higher resolution.
+%
+% A video lecture on using matrix-vector representations in colorimetric
+% calculations is available here
+%     Stream - https://www.dropbox.com/s/lvtr3r60olmho3d/ConeFundamentalsLinearTransform.Orig.mp4?dl=0
+%     Download - https://www.dropbox.com/s/lvtr3r60olmho3d/ConeFundamentalsLinearTransform.Orig.mp4?dl=1
+% As with the video above, the downloaded version will play at higher resolution.
 %
 % See also: RenderSpectrumOnMonitorForDogTutorial, RenderImageOnMonitorForDogTutorial
 
