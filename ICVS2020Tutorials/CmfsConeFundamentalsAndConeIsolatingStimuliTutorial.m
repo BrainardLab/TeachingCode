@@ -20,6 +20,26 @@
 % This tutorial was originally developed to generate figures for a book
 % that David Brainard and Andrew Stockman may write someday, and has been
 % extended and modified here for explanatory purposes.
+%
+% This tutorial is available in the github repository
+%   https://github.com/BrainardLab/TeachingCode
+% You can either clone the respository or just download a copy from
+% that page (see green "Code" button).
+%
+% To run this, you will need both the Psychophysics Toolbox (PsychToolbox),
+% BrainardLabToolbox and ColorBookToolbox on your path.  You can get the
+% PsychToolbox from
+%   psychtoolbox.org
+% You can get the BrainardLabToolbox from
+%   https://github.com/BrainardLab/BrainardLabToolbox
+% You can get the ColorBookToolbox from
+%   https://github.com/DavidBrainard/ColorBookToolbox
+%
+% If you use the ToolboxToolbox (https://github.com/toolboxhub/toolboxtoolbox)
+% and install the TeachingCode repository in your projects folder, you can
+% install the dependencies by using
+%     tbUseProject('TeachingCode')
+% at the Matlab prompt.
 
 % History:
 %    08/21/2020  dhb  Simplified and then expanded from a similar similar
@@ -163,7 +183,7 @@ if (max(abs(quantity)) > tolerance)
     error('Cone isolating spectra LMS check fails');
 end
 
-%% Construct chromaticity diagram for the rgb tristimulus space.
+%% Construct chromaticity diagram for the RGB tristimulus space.
 %
 % In a chromaticity diagram, we normalize tristimulus values in some manner
 % so that we remove information about intensive variation in the stimulus
@@ -228,7 +248,7 @@ end
 % a set of stimuli that are distinguishable.
 %
 % There are three classes of dichromats, protanopes (missing L cones),
-% deuteranopes (missing M cones), and tritanopes (missing S cones.  We can
+% deuteranopes (missing M cones), and tritanopes (missing S cones).  We can
 % compute confusion lines for each class.
 %
 % We do this by adding the stimuli in the cone isolating direction for the
@@ -236,13 +256,12 @@ end
 % cone isolating stimulus mixed in.  Here we'll do that starting with each
 % stimulus on the spectrum locus, every 10 nm.
 %
-% These converge on the chromaticity of the isolating direction for each My
-% intuition for this is that as you add more and more of the stimulus in
-% the cone isolating direction, it dominates the tristimulus coordinates
-% more and more, swamping whatever it was being added to.  In the limit,
-% then, the chromaticity of the summed stimulus will be that of the cone
-% isolating stimulus.
-%
+% These converge on the chromaticity of the isolating direction for each
+% cone class. My intuition for this is that as you add more and more of the
+% stimulus in the cone isolating direction, it dominates the tristimulus
+% coordinates more and more, swamping whatever it was being added to.  In
+% the limit, then, the chromaticity of the summed stimulus will be that of
+% the cone isolating stimulus.
 
 % Chromaticity of cone isolating directions
 coneIsolatingRGBDirs_chrom = XYZToxyY(coneIsolatingRGBDirs);
@@ -384,10 +403,11 @@ end
 % the response row vector in tristimulus RGB, t is the tristimulus column
 % vector representing a stimulus, u is a unit row vector in LMS cone space
 % and c is a cone excitation column vector.  We also have t = M*c with M
-% being the M_ConesToCmf computed above.  Thus we must have r = u*M_inv =
-% u*M_CmfToCones. Note that r does not necessarily have unit length -- it
-% is only in the cone excitation space where the response vectors are
-% guaranteed to be the unit vectors and to have unit length.
+% being the M_ConesToCmf computed above. Since this holds for any choice of
+% c, we have r*M = u, which leads to r = u*M_inv = u*M_CmfToCones. Note
+% that r does not necessarily have unit length -- it is only in the cone
+% excitation space where the response vectors are guaranteed to be the unit
+% vectors and to have unit length.
 %
 % Also produce normalized version for plotting.
 coneResponseRGBVectors = [ [1 0 0] ; [0 1 0] ; [0 0 1] ]*M_CmfToCones;
@@ -406,9 +426,9 @@ end
 
 %% More on cone isolating stimuli and sensitivity vectors.
 %
-% Here's another way to think about this, or perhaps the same way expressed differently.
-% We have two color spaces to represent stimuli here, the RGB tristimulus
-% space and the LMS cone space.
+% Here's another way to think about this, or perhaps the same way expressed
+% differently. We have two color spaces to represent stimuli here, the RGB
+% tristimulus space and the LMS cone space.
 %
 % Let's suppose we have a vector of cone excitations with values [l m s]'.
 % This is a point in cone space.  In LMS cone space, the sensitivity vectors
@@ -418,10 +438,10 @@ end
 % senstiity vector and the stimulus representation in cone space yields the
 % coorresponding excitation.  For example, [1 0 0]*[l m s]' = l, etc.
 %
-% In addition, the cone isolating vectors of unit length are trivial to write down in cne
-% space. These are [1 0 0]', [0 1 0]', and [0 0 1]'.  Adding each of these
-% vectors to any stimulus in cone space only affects the responses of one
-% class of cones.
+% In addition, the cone isolating vectors of unit length are trivial to
+% write down in cne space. These are [1 0 0]', [0 1 0]', and [0 0 1]'.
+% Adding each of these vectors to any stimulus in cone space only affects
+% the responses of one class of cones.
 %
 % We can stack the cone sensitivity vectors into the rows of a matrix, and we
 % get the identity matrix [ [1 0 0] ; [0 1 0] ; [0 0 1] ].  Similary, we
@@ -444,8 +464,7 @@ end
 % from the work we did above.
 %
 % We've also argued above that the sensitivity vectors are obtained as
-%     coneResponseRGBVectors = [ [1 0 0] ; [0 1 0] ; [0 0 1]
-%     ]*M_CmfToCones;
+%     coneResponseRGBVectors = [ [1 0 0] ; [0 1 0] ; [0 0 1]]*M_CmfToCones;
 %
 % It better be the case that if we compute the cone excitations of the same
 % stimuli in RGB space, we get the same answer as we do if we compute them
