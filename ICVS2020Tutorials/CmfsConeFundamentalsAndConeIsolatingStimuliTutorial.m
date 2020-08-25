@@ -12,7 +12,12 @@
 % transformation of the Stiles-Burch 10 degree Cmfs, and illustrates how
 % the spectrum locus, cone isolating stimulus directions, and cone response
 % mechanism vectors look in the RGB tristimulus space and in the rg
-% chromaticity diagram.
+% chromaticity diagram. The latter explain the concept of dichromatic
+% confusion lines.
+%
+% Finally, it shows how to use the copuncatal points from the dichroatic
+% confusion lines to estimate the linear transformation between color
+% matching functions and cone fundamentals.
 %
 % The Stiles-Burch 10-degree cmfs are expressed with respect to primaries at
 % 645.16, 526.32, 444.44 nm. Here we round to nearest integer wavelength.
@@ -42,9 +47,11 @@
 % at the Matlab prompt.
 
 % History:
-%    08/21/2020  dhb  Simplified and then expanded from a similar similar
-%                     figure generating program in the ColorBookFigures
-%                     repository.
+%   08/21/2020  dhb  Simplified and then expanded from a similar similar
+%                    figure generating program in the ColorBookFigures
+%                    repository.
+%   08/22/2020  dhb  Better comments, variable naming, etc.
+%   08/25/2020  dhb  Add in Konig fundamental section.
 
 %% Initialize
 clear; close all; drawnow;
@@ -595,6 +602,117 @@ set(gca,'XDir','Reverse');
 set(gca,'YDir','Reverse');
 az = -51; el = 34; view(az,el);
 grid on
+
+%% Recover the cone fundamentals from the confusion lines.
+%
+% First step is to get the chromaticities of the cone isolatiing
+% directions.  We've seen above that the confusion lines converge on the
+% chromaticities of the cone isolating directions, so we just need to do a
+% little algebra to see how we can use the lines to find their point of
+% intersection.  We'll then use the chromaticities of the cone isolating
+% directions to lock in the linear transfromation between CMFs and cone
+% fundamentals. There will still be a free scale factor for each
+% fundamental that governs overall height, that needs to be found in some
+% other way but for many applications (e.g. computing cone contrast) we can
+% use versions of the fundamentals normalized in some convenient manner
+% (e.g., to a peak of 1).
+%
+% We can express each confusion line as g = a*r+b.   First step is to find
+% a and b for each confusion line.  This is just linear regression.
+for w = 1:3
+    for i = 1:nConfusionLines
+        xData = [confusionLine_chrom{w,i}(1,:)' ones(nConfusionPoints,1)];
+        yData = confusionLine_chrom{w,i}(2,:)';
+        confusionLineFit{w}(:,i) = xData\yData;
+    end
+end
+
+% With the fit to the set of lines, we can find the point where they
+% intersect.  We re-express the set of equations as a linear system in
+% r,g, of the form -b = a*r - g for each fit line, and then solve for
+% r,g.  
+for w = 1:3
+    M = [confusionLineFit{w}(1,:)' -1*ones(nConfusionLines,1)];
+    negB = -confusionLineFit{w}(2,:)';
+    conpunctalPoint{w} = M\negB;
+end
+
+% Plot chromaticity plot shows these recovered points in yellow
+% for each type of dichromat; they lie right over the actual
+% copunctal chromaticities.
+%
+% What this shows explicitly is that if you have experimental measurements
+% of the dichromatic confusion lines, obtained by doing multiple matches to
+% each of several test lights, you can repeat the above analysis on real
+% data and locate the chromaticities of the cone isolating directions as
+% the copunctal points of the lines.
+figure(chromaticityFig);
+for w = 1:3
+    % Grab the right subplot
+    subplot(chromSubplotHandle(w));
+    
+    % Plot the recovered copunctal point
+    plot(conpunctalPoint{w}(1),conpunctalPoint{w}(2), ...
+        'yo','MarkerFaceColor','y','MarkerSize',figParams.markerSize-figParams.subplotMarkerShrink-6);
+end
+
+%% Use the recovered copunctal points to get the cones from the color matching functions
+%
+% Notice that above we got the isolating directions using the following
+% line of code:
+%   coneIsolatingRGBDirs = M_ConesToCmf*[[1 0 0]', [0 1 0]', [0 0 1]'];
+% This means that coneIsolatingRGBDirs = M_ConesToCmf, the
+% multiplication by the identity matrix was just there for conceptual
+% clarity.
+%
+% So if we convert the copunctal chromaticities to RGB with an arbitrary
+% length and then treat that as an M_ConesToCmfs matrix, we can invert it
+% to get an M_CmfsToCones matrix.
+%
+% These are the so called Konig fundamentals.
+for w = 1:3
+    copunctalrgY = [conpunctalPoint{w} ; 1];
+    copunctalRGB(:,w) = xyYToXYZ(copunctalrgY);
+end
+M_CmfsToCones_copunctalDerived = inv(copunctalRGB);
+T_cones10_1nm_copunctalDerivedRaw = M_CmfsToCones_copunctalDerived*T_stiles10_1nm;
+
+% The scale of the recovered sensitivities is arbitrary and could even be
+% negative.  Normalize so that peak of each one is 1.  This was already the
+% normalization we had for the Stockman-Sharpe fundamentals.
+for w = 1:3
+    [~,index] = max(abs(T_cones10_1nm_copunctalDerivedRaw(w,:)));
+    T_cones10_1nm_copunctalDerived(w,:) = T_cones10_1nm_copunctalDerivedRaw(w,:)/T_cones10_1nm_copunctalDerivedRaw(w,index(1));
+end
+
+%% Plot actual and derived cone fundamentals
+[stockmanSharpe10DerivedFig,figParams] = cbFigInit;
+figParams.xLimLow = 350;
+figParams.xLimHigh = 750;
+figParams.xTicks = [350 400 450 500 550 600 650 700 750];
+figParams.xTickLabels = {'^{ }350_{ }' '^{ }400_{ }' '^{ }450_{ }' '^{ }500_{ }' ...
+    '^{ }550_{ }' '^{ }600_{ }' '^{ }650_{ }' '^{ }700_{ }' '^{ }750_{ }'};
+figParams.yLimLow = 0;
+figParams.yLimHigh = 1;
+figParams.yTicks = [0 0.5 1];
+figParams.yTickLabels = {' 0.0 ' ' 0.5 ' ' 1.0 '};
+
+% Plot the fundamentals.
+plot(wls_1nm,T_cones10_1nm(1,:)','r','LineWidth',figParams.lineWidth);
+plot(wls_1nm,T_cones10_1nm(2,:)','g','LineWidth',figParams.lineWidth);
+plot(wls_1nm,T_cones10_1nm(3,:)','b','LineWidth',figParams.lineWidth);
+
+% Pop on top the fit derived from the simulated confusion lines.
+plot(wls_1nm,T_cones10_1nm_copunctalDerived(1,:)','k:','LineWidth',figParams.lineWidth-1);
+plot(wls_1nm,T_cones10_1nm_copunctalDerived(2,:)','k:','LineWidth',figParams.lineWidth-1);
+plot(wls_1nm,T_cones10_1nm_copunctalDerived(3,:)','k:','LineWidth',figParams.lineWidth-1);
+
+xlabel('Wavelength (nm)','FontSize',figParams.labelFontSize);
+ylabel('Cone Fundamental (energy units)','FontSize',figParams.labelFontSize);
+title('Target and Konig Derived Fundamentals','FontSize',figParams.titleFontSize);
+cbFigAxisSet(stockmanSharpe10Fig,figParams);
+
+
 
 
 
