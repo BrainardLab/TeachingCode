@@ -613,7 +613,7 @@ grid on
 % directions to lock in the linear transfromation between CMFs and cone
 % fundamentals. There will still be a free scale factor for each
 % fundamental that governs overall height, that needs to be found in some
-% other way but for many applications (e.g. computing cone contrast) we can
+% other way. But for many applications (e.g. computing cone contrast) we can
 % use versions of the fundamentals normalized in some convenient manner
 % (e.g., to a peak of 1).
 %
@@ -628,24 +628,30 @@ for w = 1:3
 end
 
 % With the fit to the set of lines, we can find the point where they
-% intersect.  We re-express the set of equations as a linear system in
-% r,g, of the form -b = a*r - g for each fit line, and then solve for
-% r,g.  
+% intersect.  We re-express the set of equations as a linear system (set of
+% simultaneous linear equations) in r,g, of the form -b = a*r - g for each
+% fit line, and then solve for r,g.  For each type of dichromat, the
+% resultant (r,g) is called the copunctal point of the confusion lines.
+%
+% We only need two confusion lines to fine the intersection. If we have
+% more they just add to the set of linear equations but they should all be
+% consistent up to measurement noise.  (Here they are exactly consistent
+% because we simulated them.)
 for w = 1:3
     M = [confusionLineFit{w}(1,:)' -1*ones(nConfusionLines,1)];
     negB = -confusionLineFit{w}(2,:)';
     conpunctalPoint{w} = M\negB;
 end
 
-% Plot chromaticity plot shows these recovered points in yellow
-% for each type of dichromat; they lie right over the actual
-% copunctal chromaticities.
+% Add conpunctal points to the chromaticity plot we developed above, in
+% yellow for each type of dichromat; they lie right over the actual
+% cone isolating stimulus chromaticities.
 %
 % What this shows explicitly is that if you have experimental measurements
 % of the dichromatic confusion lines, obtained by doing multiple matches to
-% each of several test lights, you can repeat the above analysis on real
-% data and locate the chromaticities of the cone isolating directions as
-% the copunctal points of the lines.
+% each of several test lights for the different types of dichromats, you
+% can repeat the above analysis on real data and locate the chromaticities
+% of the cone isolating directions as the copunctal points of the lines.
 figure(chromaticityFig);
 for w = 1:3
     % Grab the right subplot
@@ -667,7 +673,10 @@ end
 %
 % So if we convert the copunctal chromaticities to RGB with an arbitrary
 % length and then treat that as an M_ConesToCmfs matrix, we can invert it
-% to get an M_CmfsToCones matrix.
+% to get an M_CmfsToCones matrix.  The length doesn't matter to us, it just
+% affects the scale of the fundamentals but not their shape.  (You can try
+% it yourself by using different choices of scale and looking at what
+% happens.)
 %
 % These are the so called Konig fundamentals.
 for w = 1:3
