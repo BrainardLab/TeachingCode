@@ -6,8 +6,9 @@ function writeRGB(a, red, green, blue)
 %
 % Description:
 %    Control the R,G, and B channels of the RGB LED.
+%
 %    Requires Matlab arduino toolbox, and designed to
-%    match our teaching device.
+%    match our teaching anomaloscope.
 %
 % Inputs:
 %    a       - Arduino object, obtained via a = arduino;

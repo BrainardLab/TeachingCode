@@ -6,8 +6,9 @@ function writeYellow(a, yellow)
 %
 % Description:
 %    Control the yellow LED.
+%
 %    Requires Matlab arduino toolbox, and designed to
-%    match our teaching device.
+%    match our teaching anomaloscope.
 %
 % Inputs:
 %    a       - Arduino object, obtained via a = arduino;
@@ -16,7 +17,7 @@ function writeYellow(a, yellow)
 % Outputs:
 %    None.
 %
-% See also: bytesToPWMRGB, writeYellow, bytesToPWMYellow.
+% See also: writeRGB, bytesToPWMRGB, bytesToPWMYellow.
 
 % History:
 %    08/xx/20  lk  Wrote initial version
