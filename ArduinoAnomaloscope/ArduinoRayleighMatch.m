@@ -1,6 +1,10 @@
 % ArduinoRayleighMatch
 %
 % Little program to do Rayleigh matches with our arduino device.
+%
+% The initial parameters here %are close to a match with my device,
+% Scotch tape as diffuser, and a Roscolux #23 orange filter
+% to cut out short wavelengths.
 
 % History
 %   Written 2020 by David Brainard based on demo code provided by Liana Keesing.
@@ -17,19 +21,20 @@ if (~exist('arduinosetup.m','file'))
 end
 
 % Initialize arduino
+clear;
 clear a
 a = arduino;
 
 % Yellow LED parameters
-yellow = 150;                                   % Initial yellow value
+yellow = 66;                                    % Initial yellow value
 yellowDeltas = [10 5 1];                        % Set of yellow deltas
 yellowDeltaIndex = 1;                           % Delta index    
 yellowDelta = yellowDeltas(yellowDeltaIndex);   % Current yellow delta
 
 % Red/green mixture parameters.  These get traded off in the
 % mixture by a parameter lambda.
-redAnchor = 100;                                % Red value for lambda = 1
-greenAnchor = 120;                              % Green value for lambda = 0
+redAnchor = 58;                                 % Red value for lambda = 1
+greenAnchor = 440;                              % Green value for lambda = 0
 lambda = 0.5;                                   % Initial lambda value
 lambdaDeltas = [0.02 0.005 0.001];              % Set of lambda deltas
 lambdaDeltaIndex = 1;                           % Delta index
@@ -77,7 +82,7 @@ while true
     
     % Tell user where we are
     fprintf('Lambda = %0.3f, Red = %d, Green = %d, Yellow = %d\n',lambda,red, green, yellow); 
-    fprintf('\tLambda delta %0.3f; yellow delta %d\n',lambdaIncr,yellowDelta);
+    fprintf('\tLambda delta %0.3f; yellow delta %d\n',lambdaDelta,yellowDelta);
     
     % Write the current LED settings
     writeRGB(a,red,green,0);
@@ -90,13 +95,13 @@ while true
             break;
             
         case 'r'
-            lambda = lambda+lambdaIncr;
+            lambda = lambda+lambdaDelta;
             if (lambda > 1)
                 lambda = 1;
             end
             
         case 'g'
-            lambda = lambda-lambdaIncr;
+            lambda = lambda-lambdaDelta;
             if (lambda < 0)
                 lambda = 0;
             end
@@ -130,7 +135,7 @@ while true
             if (lambdaDeltaIndex > length(lambdaDeltas))
                 lambdaDeltaIndex = 1;
             end
-            lambdaIncr = lambdaDeltas(lambdaDeltaIndex);
+            lambdaDelta = lambdaDeltas(lambdaDeltaIndex);
             
         case ';'
             yellowDeltaIndex = yellowDeltaIndex+1;
