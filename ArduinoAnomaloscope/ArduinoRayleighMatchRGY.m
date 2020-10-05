@@ -1,6 +1,9 @@
 % ArduinoRayleighMatchRGY
 %
 % Little program to do Rayleigh matches with our arduino device.
+%
+% This version lets you adjust red, green and yellow intensities separately
+% For classic anomaloscope adjustments, see ArduinoRayleighMatch.
 
 % History
 %   Written 2020 by David Brainard based on demo code provided by Liana Keesing.
@@ -18,7 +21,7 @@ end
 
 % Initialize arduino
 clear;
-clear a
+clear a;
 a = arduino;
 
 % Initial LED parameters.  These are close to a match with my device,

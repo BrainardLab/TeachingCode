@@ -2,9 +2,13 @@
 %
 % Little program to do Rayleigh matches with our arduino device.
 %
-% The initial parameters here %are close to a match with my device,
+% The initial parameters here are close to a match with my device,
 % Scotch tape as diffuser, and a Roscolux #23 orange filter
 % to cut out short wavelengths.
+%
+% This version lets you adjust r/g mixture and yellow intensity, as in
+% classic anomaloscope.  See ArduinoRayleighMatchRGY for a different set of
+% controls.
 
 % History
 %   Written 2020 by David Brainard based on demo code provided by Liana Keesing.
@@ -22,7 +26,7 @@ end
 
 % Initialize arduino
 clear;
-clear a
+clear a;
 a = arduino;
 
 % Yellow LED parameters
