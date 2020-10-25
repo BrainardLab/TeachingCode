@@ -44,3 +44,14 @@ xlabel('Wavelength (nm)');
 ylabel('Radiance (Watts/sr-m2-nm)');
 title('RG spectra with filter');
 ylim([0 0.1]);
+
+%% Check RG additivity
+specSum = specRThroughFilter + specGThroughFilter;
+figure; clf; hold on
+plot(wls,(specL)/5,'r','LineWidth',3);
+plot(wls,specSum/5,'k:','LineWidth',2);
+xlabel('Wavelength (nm)');
+ylabel('Radiance (Watts/sr-m2-nm)');
+title('Additivity of spectra');
+ylim([0 0.025]);
+
