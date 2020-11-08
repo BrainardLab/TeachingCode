@@ -1,4 +1,4 @@
-function GLW_Gabor
+function GLW_FlickeringGabor
 % GLW_Gabor  Demonstrates how to show a gabor patch in GLWindow.
 %
 % Syntax:
@@ -43,58 +43,63 @@ try
     bgRGB1 = PrimaryToSettings(igertCalSV,bgrgb);
     win.BackgroundColor = bgRGB1';
     win.draw;
-    
-    % Add central fixation cross, just for fun
-    win.addLine([-20 0], [20 0], 3, [1 1 1],'Name','fixHorz');
-    win.addLine([0 20], [0 -20], 3, [1 1 1],'Name', 'fixVert');
-    
-    % Create two gabor patches with specified parameters
+        
+    % Create gabor patches with specified parameters
     pixelSize = 400;
-    contrast1 = 0.75;
-    contrast2 = 0.25;
-    sf1 = 6;
-    sf2 = 3;
-    sigma1 = 0.1;
-    sigma2 = 0.2;
-    theta1 = 0;
-    theta2 = 75;
-    phase1 = 90;
-    phase2 = 0;
-    xdist = 400;
+    contrast = 0.75;
+    sf = 6;
+    sigma = 0.1;
+    theta = 0;
+    nPhases = 10;
+    phases = linspace(0,360,nPhases);
+    xdist = 0;
     ydist = 0;
-    gabor1rgb = createGabor(pixelSize,contrast1,sf1,theta1,phase1,sigma1);
-    gabor2rgb = createGabor(pixelSize,contrast2,sf2,theta2,phase2,sigma2);
+    for ii = 1:nPhases
+        % Make gabor in each phase
+        gaborrgb{ii} = createGabor(pixelSize,contrast,sf,theta,phases(ii),sigma);
+        
+        % Gamma correct
+        [calForm1 c1 r1] = ImageToCalFormat(gaborrgb{ii});
+        [RGB] = PrimaryToSettings(igertCalSV,calForm1);
+        gaborRGB{ii} = CalFormatToImage(RGB,c1,r1);
+   
+        win.addImage([xdist ydist], [pixelSize pixelSize], gaborRGB{whichPhase}, 'Name',sprintf('theGabor%d',whichPhase));
+    end
     
-    % Gamma correct
-    [calForm1 c1 r1] = ImageToCalFormat(gabor1rgb);
-    [calForm2 c2 r2] = ImageToCalFormat(gabor2rgb);
-    [RGB1] = PrimaryToSettings(igertCalSV,calForm1);
-    [RGB2] = PrimaryToSettings(igertCalSV,calForm2);
-    gabor1RGB = CalFormatToImage(RGB1,c1,r1);
-    gabor2RGB = CalFormatToImage(RGB2,c2,r2);
-    
-    % Add to display and draw.  One is on left and the other on the right.
-    win.addImage([-xdist ydist], [pixelSize pixelSize], gabor1RGB, 'Name','leftGabor');
-    win.addImage([xdist ydist], [pixelSize pixelSize], gabor2RGB, 'Name','rightGabor');
-    win.enableObject('leftGabor');
-    win.enableObject('rightGabor');
-    win.draw;
+    % Temporal params
+    hz = 1;
+    frameRate = d.refreshRate;
+    framesPerPhase = round((frameRate/hz)/nPhases);
     
     % Wait for a key to quit
     ListenChar(2);
     FlushEvents;
+    whichPhase = 1;
+    whichFrame = 1;
+    oldPhase = nPhases;
+    win.enableObject(sprintf('theGabor%d',nPhases));
     while true
+        if (whichFrame == 1)
+            win.disableObject(sprintf('theGabor%d',oldPhase));
+            win.enableObject(sprintf('theGabor%d',whichPhase));
+            oldPhase = whichPhase;
+            whichPhase = whichPhase + 1;
+            if (whichPhase > nPhases)
+                whichPhase = 1;
+            end
+        end
         win.draw;
-        key = GetChar;
+        whichFrame = whichFrame + 1;
+        if (whichFrame > framesPerPhase)
+            whichFrame = 1;
+        end
         
+        key = GetChar; 
         switch key
             % Quit
             case 'q'
                 break;
-            case 'd'
-                win.dumpSceneToTiff('GLGabors.tif');
             otherwise
-                break;
         end
     end
     
@@ -106,7 +111,7 @@ try
 catch e
     ListenChar(0);
     if ~isempty(win)
-        win.close;
+           win.close;
     end
     rethrow(e);
 end
