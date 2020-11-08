@@ -45,12 +45,13 @@ try
     win.draw;
         
     % Create gabor patches with specified parameters
-    pixelSize = 400;
-    contrast = 0.75;
-    sf = 6;
-    sigma = 0.1;
+    sine = false;
+    pixelSize = min(screenDims);
+    contrast = 0.9;
+    sf = 1;
+    sigma = 0.5;
     theta = 0;
-    nPhases = 10;
+    nPhases = 100;
     phases = linspace(0,360,nPhases);
     xdist = 0;
     ydist = 0;
@@ -58,16 +59,21 @@ try
         % Make gabor in each phase
         gaborrgb{ii} = createGabor(pixelSize,contrast,sf,theta,phases(ii),sigma);
         
+        if (~sine)
+            gaborrgb{ii}(gaborrgb{ii} > 0.5) = 1;
+            gaborrgb{ii}(gaborrgb{ii} < 0.5) = 0;
+        end
+        
         % Gamma correct
         [calForm1 c1 r1] = ImageToCalFormat(gaborrgb{ii});
         [RGB] = PrimaryToSettings(igertCalSV,calForm1);
         gaborRGB{ii} = CalFormatToImage(RGB,c1,r1);
    
-        win.addImage([xdist ydist], [pixelSize pixelSize], gaborRGB{whichPhase}, 'Name',sprintf('theGabor%d',whichPhase));
+        win.addImage([xdist ydist], [pixelSize pixelSize], gaborRGB{ii}, 'Name',sprintf('theGabor%d',ii));
     end
     
     % Temporal params
-    hz = 1;
+    hz = 0.5;
     frameRate = d.refreshRate;
     framesPerPhase = round((frameRate/hz)/nPhases);
     
@@ -77,15 +83,18 @@ try
     whichPhase = 1;
     whichFrame = 1;
     oldPhase = nPhases;
+    flicker = true;
     win.enableObject(sprintf('theGabor%d',nPhases));
     while true
         if (whichFrame == 1)
-            win.disableObject(sprintf('theGabor%d',oldPhase));
-            win.enableObject(sprintf('theGabor%d',whichPhase));
-            oldPhase = whichPhase;
-            whichPhase = whichPhase + 1;
-            if (whichPhase > nPhases)
-                whichPhase = 1;
+            if (flicker)
+                win.disableObject(sprintf('theGabor%d',oldPhase));
+                win.enableObject(sprintf('theGabor%d',whichPhase));
+                oldPhase = whichPhase;
+                whichPhase = whichPhase + 1;
+                if (whichPhase > nPhases)
+                    whichPhase = 1;
+                end
             end
         end
         win.draw;
@@ -94,11 +103,19 @@ try
             whichFrame = 1;
         end
         
-        key = GetChar; 
+        key = 'z';
+        if (CharAvail)
+            key = GetChar; 
+        end
         switch key
             % Quit
             case 'q'
                 break;
+            case 'u'
+                flicker = false;
+                win.disableObject(sprintf('theGabor%d',oldPhase));
+            case 'f'
+                 flicker = true;
             otherwise
         end
     end
