@@ -20,7 +20,7 @@ error(nargchk(0, 1, nargin));
 
 % Setup defaults for the input.
 if ~exist('fullScreen', 'var')
-	fullScreen = true;
+	fullScreen = false;
 end
 
 % Do everything in a try/catch to clean up better in case of error.
