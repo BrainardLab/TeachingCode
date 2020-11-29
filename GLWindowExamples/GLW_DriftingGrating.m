@@ -1,5 +1,5 @@
 function GLW_DriftingGrating
-% GLW_Gabor  Demonstrates how to drift a grating in GLWindow.
+% GLW_DriftingGrating Demonstrates how to drift a grating in GLWindow.
 %
 % Syntax:
 %     GLW_DriftingGrating
