@@ -1,20 +1,17 @@
-function GLW_FlickeringGabor
-% GLW_Gabor  Demonstrates how to show a gabor patch in GLWindow.
+function GLW_DriftingGrating
+% GLW_Gabor  Demonstrates how to drift a grating in GLWindow.
 %
 % Syntax:
-%     GLW_Gabor
+%     GLW_DriftingGrating
 %
 % Description:
-%     The function createGabor at the end does the work of
-%     creating the gabor patch. 
-% 
-%     Also demonstrated is how to use the PTB calibration routines
-%     to gamma correct the gabor.
+%     The function drifts a grating.  Might not be completely done
 %
 %     Press - 'd' to dump image of window into a file
 %           - 'q' to quit
 
 % 12/5/12  dhb  Wrote it from code lying around, in part due to Adam Gifford.
+% 11/xx/20 dhb  Drifting version.
 
 try 
     % Choose the last attached screen as our target screen, and figure out its
