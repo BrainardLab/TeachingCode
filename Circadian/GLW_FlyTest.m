@@ -48,6 +48,7 @@ try
     stimStructs{2} = stimStruct;
     
     % Stimulus cycle time info
+    waitToStart = false;
     startTime = 15:45;
     stimCycle = [1 2];
     stimDurationsHours = [0.1 0.1];
@@ -76,7 +77,9 @@ try
     whichStruct = 1;
     
     % Wait until start time
-    while (datenum(datestr(now,'HH:MM'),'HH:MM')-datenum(startTime,'HH:MM') < 0)
+    if (waitToStart)
+        while (datenum(datestr(now,'HH:MM'),'HH:MM')-datenum(startTime,'HH:MM') < 0)
+        end
     end
     
     % Cycle through stimulus types until someone hits q
