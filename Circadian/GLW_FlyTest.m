@@ -16,7 +16,7 @@ try
     
     % Set initial background at roughly half the
     % dispaly maximum luminance.
-    bgRGB = [173 173 173];
+    bgRGB = [173 173 173]/255;
     
     % Static struct
     clear stimStruct
@@ -35,8 +35,8 @@ try
     % Drifting grating struct
     clear stimStruct;
     stimStruct.type = 'drifting';
-    stimStruct.cyclesImage = 2;
-    stimStruct.tf = 0.5;
+    stimStruct.sfCyclesImage = 2;
+    stimStruct.tfHz = 0.5;
     stimStruct.nPhases = 100;
     stimStruct.contrast = 0.9;
     stimStruct.sine = false;
@@ -50,25 +50,26 @@ try
     % Stimulus cycle time info
     waitToStart = false;
     startTime = 15:45;
-    stimCycle = [1 2];
-    stimDurationsHours = [0.1 0.1];
+    stimCycle = [2];
+    stimDurationsHours = [0.1];
     nStim = length(stimCycle);
     
     % Convenience parameters
-    stimDurationsSecs = stimDurationsHours/3600;
+    stimDurationsSecs = stimDurationsHours*3600;
     
     % Open the window
     %
     % Choose the last attached screen as our target screen, and figure out its
     % screen dimensions in pixels.  Using these to open the GLWindow keeps
     % the aspect ratio of stuff correct.
-    fullScreen = true;
+    fullScreen = false;
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
+    pixelSize = min(screenDims);
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
-    win.BackgroundColor = bgRGB';
+    win.BackgroundColor = bgRGB;
     win.draw;
         
     % Set up key listener
@@ -87,15 +88,16 @@ try
     quit = false;
     while true
         % Do whatever for the given stimulus type
-        switch stimulusStructs(whichStim).type
+        switch stimStructs{stimCycle(whichStim)}.type
             case 'static'
+                
             case 'drifting'
                 % Initialize drifting grating
-                stimStruct = stimStructs{whichStim};
-                phases = linspace(0,360,nPhases);
-                for ii = 1:nPhases
+                stimStruct = stimStructs{stimCycle(whichStim)};
+                phases = linspace(0,360,stimStruct.nPhases);
+                for ii = 1:stimStruct.nPhases
                     % Make gabor in each phase
-                    gaborrgb{ii} = createGabor(stimStruct.pixelSize,stimStruct.contrast,stimStruct.sf,stimStruct.theta,phases(ii),stimStruct.sigma);
+                    gaborrgb{ii} = createGabor(pixelSize,stimStruct.contrast,stimStruct.sfCyclesImage,stimStruct.theta,phases(ii),stimStruct.sigma);
                     
                     if (~stimStruct.sine)
                         gaborrgb{ii}(gaborrgb{ii} > 0.5) = 1;
@@ -104,24 +106,24 @@ try
                     
                     % Convert to RGB
                     [calForm1 c1 r1] = ImageToCalFormat(gaborrgb{ii});
-                    RGB = round(255*calForm1);
+                    RGB = calForm1;
                     gaborRGB{ii} = CalFormatToImage(RGB,c1,r1);
                     clear gaborrgb
                     
                     % Add the images to the window.
-                    win.addImage([stimStruct.xdist stimStruct.ydist], [stimStruct.pixelSize stimStruct.pixelSize], gaborRGB{ii}, 'Name',sprintf('theGabor%d',ii));
+                    win.addImage([stimStruct.xdist stimStruct.ydist], [pixelSize pixelSize], gaborRGB{ii}, 'Name',sprintf('theGabor%d',ii));
                     clear gaborRGB
                 end
 
                 % Temporal params
-                framesPerPhase = round((frameRate/stimStruct.hz)/stimStruct.nPhases);
+                framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 
-                % Drift the\ grating according to the grating's parameters
+                % Drift the grating according to the grating's parameters
                 startSecs = GetSecs;
                 finishSecs = startSecs + stimDurationsSecs(whichStim);
                 whichPhase = 1;
                 whichFrame = 1;
-                oldPhase = nPhases;
+                oldPhase = stimStruct.nPhases;
                 flicker = true;
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
@@ -130,7 +132,7 @@ try
                             win.enableObject(sprintf('theGabor%d',whichPhase));
                             oldPhase = whichPhase;
                             whichPhase = whichPhase + 1;
-                            if (whichPhase > nPhases)
+                            if (whichPhase > stimStruct.nPhases)
                                 whichPhase = 1;
                             end
                         end
@@ -161,7 +163,7 @@ try
                 
                 
                 % Delete the images from the window.
-                for ii = 1:nPhases
+                for ii = 1:stimStruct.nPhases
                     win.deleteObject(sprintf('theGabor%d',ii));
                     clear gaborRGB
                 end
