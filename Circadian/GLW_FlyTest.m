@@ -18,7 +18,7 @@ try
     % Set initial background at roughly half the
     % dispaly maximum luminance.
     % bgRGB = [173 173 173]/255;
-    bgRGB = [0 0 0]/255;
+    bgRGB = [255 255 255]/255;
     
     % Static struct
     clear stimStruct
@@ -81,6 +81,8 @@ try
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
+    rowSize = screenDims(1);
+    colSize = screenDims(2);
     pixelSize = min(screenDims);
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
@@ -102,7 +104,7 @@ try
                 phases = linspace(0,360,stimStruct.nPhases);
                 for ii = 1:stimStruct.nPhases
                     % Make gabor in each phase
-                    gaborrgb{ii} = createGabor(pixelSize,stimStruct.contrast,stimStruct.sfCyclesImage,stimStruct.theta,phases(ii),stimStruct.sigma);
+                    gaborrgb{ii} = createGabor(rowSize,colSize,stimStruct.contrast,stimStruct.sfCyclesImage,stimStruct.theta,phases(ii),stimStruct.sigma);
                     
                     if (~stimStruct.sine)
                         gaborrgb{ii}(gaborrgb{ii} > 0.5) = stimStruct.contrast;
@@ -326,7 +328,7 @@ catch e
 end
 
 
-function theGabor = createGabor(meshSize,contrast,sf,theta,phase,sigma)
+function theGabor = createGabor(rowSize,colSize,contrast,sf,theta,phase,sigma)
 %
 % Input
 %   meshSize: size of meshgrid (and ultimately size of image).
@@ -345,10 +347,10 @@ function theGabor = createGabor(meshSize,contrast,sf,theta,phase,sigma)
 
 
 % Create a mesh on which to compute the gabor
-if rem(meshSize,2) ~= 0
-    error('meshSize must be an even integer');
+if rem(rowSize,2) ~= 0 | rem(colSize,2) ~= 0
+    error('row/col sizes must be an even integers');
 end
-res = [meshSize meshSize];
+res = [rowSize colSize];
 xCenter=res(1)/2;
 yCenter=res(2)/2;
 [gab_x gab_y] = meshgrid(0:(res(1)-1), 0:(res(2)-1));
@@ -356,12 +358,12 @@ yCenter=res(2)/2;
 % Compute the oriented sinusoidal grating
 a=cos(deg2rad(theta));
 b=sin(deg2rad(theta));
-sinWave=sin((2*pi/meshSize)*sf*(b*(gab_x - xCenter) - a*(gab_y - yCenter)) + deg2rad(phase));
+sinWave=sin((2*pi/rowSize)*sf*(b*(gab_x - xCenter) - a*(gab_y - yCenter)) + deg2rad(phase));
 
 % Compute the Gaussian window
 x_factor=-1*(gab_x-xCenter).^2;
 y_factor=-1*(gab_y-yCenter).^2;
-varScale=2*(sigma*meshSize)^2;
+varScale=2*(sigma*rowSize)^2;
 gaussianWindow = exp(x_factor/varScale+y_factor/varScale);
 
 % Compute gabor.  Numbers here run from -1 to 1.
