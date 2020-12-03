@@ -9,6 +9,7 @@ function GLW_FlyTest
 %     study fly circadian rhythm.
 
 % 11/29/20 dhb  Started.
+% 12/03/20 dhb  Getting there.
 
 try
     % Initialize
@@ -42,14 +43,30 @@ try
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.5;
     stimStruct.nPhases = 100;
-    stimStruct.contrast = 0.9;
+    stimStruct.contrast = 1;
     stimStruct.sine = false;
-    stimStruct.sigma = 0.5;
+    stimStruct.sigma = Inf;
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
     stimStruct.bgRGB = bgRGB;
     stimStructs{2} = stimStruct;
+    
+    % Drifting grating struct
+    clear stimStruct;
+    stimStruct.type = 'looming';
+    stimStruct.name = 'Circles';
+    stimStruct.sfCyclesImage = 2;
+    stimStruct.tfHz = 0.5;
+    stimStruct.nPhases = 100;
+    stimStruct.contrast = 1;
+    stimStruct.sine = false;
+    stimStruct.sigma = Inf;
+    stimStruct.theta = 0;
+    stimStruct.xdist = 0;
+    stimStruct.ydist = 0;
+    stimStruct.bgRGB = bgRGB;
+    stimStructs{3} = stimStruct;
     
     % Stimulus cycle time info
     waitToStart = false;
@@ -57,8 +74,8 @@ try
     stimCycle = [1 2];
     stimDurationsHours = [0.1];
     stimDurationsSecs = stimDurationsHours*3600;
-    stimDurationsSecs = [15 15 15];
-       
+    stimDurationsSecs = [10 10 10];
+    
     % Open the window
     %
     % Choose the last attached screen as our target screen, and figure out its
@@ -84,8 +101,6 @@ try
         fprintf('Initializing stimulus type %d ...',ss);
         stimStruct = stimStructs{whichStructsUsed(ss)};
         switch stimStruct.type
-            case 'static'
-                
             case 'drifting'
                 % Initialize drifting grating
                 phases = linspace(0,360,stimStruct.nPhases);
@@ -94,8 +109,8 @@ try
                     gaborrgb{ii} = createGabor(pixelSize,stimStruct.contrast,stimStruct.sfCyclesImage,stimStruct.theta,phases(ii),stimStruct.sigma);
                     
                     if (~stimStruct.sine)
-                        gaborrgb{ii}(gaborrgb{ii} > 0.5) = 1;
-                        gaborrgb{ii}(gaborrgb{ii} < 0.5) = 0;
+                        gaborrgb{ii}(gaborrgb{ii} > 0.5) = stimStruct.contrast;
+                        gaborrgb{ii}(gaborrgb{ii} < 0.5) = 1-stimStruct.contrast;
                     end
                     
                     % Convert to RGB
@@ -108,6 +123,32 @@ try
                     win.addImage([stimStruct.xdist stimStruct.ydist], [pixelSize pixelSize], gaborRGB{ii}, 'Name',sprintf('%s%d',stimStruct.name,ii));
                     clear gaborRGB
                 end
+                
+            case 'looming'
+                % Compute sizes and create circle of each size
+                theSizes = linspace(1,pixelSize,stimStruct.nSizes/2);
+                
+                % White square
+                win.addRect([0 0],[pixelSize pixelSize],[contrast contrast contrast],...
+                    'Name', sprintf('%sSquare',stimStruct.name));
+                
+                % Circles of increasing then decreasing size
+                whichCircle = 1;
+                for ii = 1:stimStruct.nSizes/2
+                    win.addOval([0 0], ...  % Center position
+                        [theSizes(ii) theSizes(ii)], ...                 % Width, Height of oval
+                        [1-contrast 1-contrast 1-contrast], ...          % RGB color
+                        'Name', sprintf('%sCircle%d',stimStruct.name,whichCircle));     % Tag associated with this oval.
+                    whichCircle = whichCircle+1;
+                end
+                for ii = stimStruct.nSizes/2:-1:1
+                    win.addOval([0 0], ...  % Center position
+                        [theSizes(ii) theSizes(ii)], ...                 % Width, Height of oval
+                        [1-contrast 1-contrast 1-contrast], ...          % RGB color
+                        'Name', sprintf('%sCircle%d',stimStruct.name,whichCircle));     % Tag associated with this oval.
+                    whichCircle = whichCircle+1;
+                end
+                
             otherwise
                 error('Unknown stimulus type specified');
         end
@@ -134,39 +175,37 @@ try
     fprintf('Starting stimulus cycling\n');
     
     % Cycle through stimulus types until someone hits q
+    allStimIndex = 1;
     whichStim = 1;
     nStim = length(stimCycle);
     quit = false;
     while true
         % Get current stimulus struct
         stimStruct = stimStructs{stimCycle(whichStim)};
+        stimShownList(allStimIndex) = stimCycle(whichStim);
         
         % Display.  Assumes already initialized
+        startSecs = GetSecs;
+        stimShownStartTimes(allStimIndex) = startSecs;
+        finishSecs = startSecs + stimDurationsSecs(whichStim);
         switch stimStruct.type
-            case 'static'
-                
+            
             case 'drifting'
-                
                 % Temporal params
                 framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 
                 % Drift the grating according to the grating's parameters
-                startSecs = GetSecs;
-                finishSecs = startSecs + stimDurationsSecs(whichStim);
                 whichPhase = 1;
                 whichFrame = 1;
                 oldPhase = stimStruct.nPhases;
-                flicker = true;
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
-                        if (flicker)
-                            win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
-                            win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
-                            oldPhase = whichPhase;
-                            whichPhase = whichPhase + 1;
-                            if (whichPhase > stimStruct.nPhases)
-                                whichPhase = 1;
-                            end
+                        win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
+                        win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
+                        oldPhase = whichPhase;
+                        whichPhase = whichPhase + 1;
+                        if (whichPhase > stimStruct.nPhases)
+                            whichPhase = 1;
                         end
                     end
                     win.draw;
@@ -188,7 +227,51 @@ try
                         otherwise
                     end
                 end
-                            
+                
+                % If we're quiting break out of stimulus loop too
+                if (quit)
+                    break;
+                end
+                
+            case 'looming'
+                % Temporal params
+                framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nSizes);
+                
+                % Drift the grating according to the grating's parameters
+                whichSize = 1;
+                whichFrame = 1;
+                oldSize = stimStruct.nSizes;
+                win.enableObject(sprintf('%sSquare',stimStruct.name));
+                while (GetSecs < finishSecs)
+                    if (whichFrame == 1)
+                        win.disableObject(sprintf('%sCircle%d',stimStruct.name,oldSize));
+                        win.enableObject(sprintf('%sCircl%d',stimStruct.name,whichSize));
+                        oldSize = whichSize;
+                        whichSize = whichSize + 1;
+                        if (whichSize > stimStruct.nSizes)
+                            whichSize = 1;
+                        end
+                    end
+                    win.draw;
+                    whichFrame = whichFrame + 1;
+                    if (whichFrame > framesPerSize)
+                        whichFrame = 1;
+                    end
+                    
+                    % Check whether key was hit, quit if 'q' then
+                    % immediately break out of stimulus show loop
+                    key = 'z';
+                    if (CharAvail)
+                        key = GetChar;
+                    end
+                    switch key
+                        case 'q'
+                            quit = true;
+                            break;
+                        otherwise
+                    end
+                end
+                
                 % If we're quiting break out of stimulus loop too
                 if (quit)
                     break;
@@ -197,6 +280,8 @@ try
             otherwise
                 error('Unknown stimulus type specified');
         end
+        stimShownFinishTimes(allStimIndex) = GetSecs;
+        allStimIndex = allStimIndex + 1;
         
         % Quit out of everything?
         if (quit)
