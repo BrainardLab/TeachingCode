@@ -23,7 +23,8 @@ try
     clear stimStruct
     stimStruct.type = 'drifting';
     stimStruct.name = 'Background';
-    stimStruct.cyclesImage = 2;
+    stimStruct.sfCyclesImage = 2;
+    stimStruct.tfHz = 0.5;
     stimStruct.nPhases = 1;
     stimStruct.contrast = 0.9;
     stimStruct.sine = false;
@@ -81,7 +82,7 @@ try
     whichStructsUsed = unique(stimCycle);
     for ss = 1:length(whichStructsUsed)
         fprintf('Initializing stimulus type %d ...',ss);
-        stimStruct = stimStructs(whichStructsUsed(ss));
+        stimStruct = stimStructs{whichStructsUsed(ss)};
         switch stimStruct.type
             case 'static'
                 
