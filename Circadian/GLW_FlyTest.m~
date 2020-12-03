@@ -185,9 +185,8 @@ try
         stimShownStartTimes(allStimIndex) = startSecs;
         if (debugNoTiming)
             finishSecs = Inf;
-        else
-            finishSecs = startSecs + stimDurationsSecs(whichStim);
-        end
+            
+        finishSecs = startSecs + stimDurationsSecs(whichStim);
         switch stimStruct.type
             
             case 'drifting'
