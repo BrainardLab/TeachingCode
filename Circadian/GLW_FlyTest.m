@@ -16,11 +16,13 @@ try
     
     % Set initial background at roughly half the
     % dispaly maximum luminance.
-    bgRGB = [173 173 173]/255;
+    % bgRGB = [173 173 173]/255;
+    bgRGB = [0 0 0]/255;
     
     % Static struct
     clear stimStruct
-    stimStruct.type = 'static';
+    stimStruct.type = 'drifting';
+    stimStruct.name = 'Background';
     stimStruct.cyclesImage = 2;
     stimStruct.nPhases = 1;
     stimStruct.contrast = 0.9;
@@ -35,6 +37,7 @@ try
     % Drifting grating struct
     clear stimStruct;
     stimStruct.type = 'drifting';
+    stimStruct.name = 'Gabor';
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.5;
     stimStruct.nPhases = 100;
@@ -50,13 +53,11 @@ try
     % Stimulus cycle time info
     waitToStart = false;
     startTime = 15:45;
-    stimCycle = [2];
+    stimCycle = [1 2];
     stimDurationsHours = [0.1];
-    nStim = length(stimCycle);
-    
-    % Convenience parameters
     stimDurationsSecs = stimDurationsHours*3600;
-    
+    stimDurationsSecs = [15 15 15];
+       
     % Open the window
     %
     % Choose the last attached screen as our target screen, and figure out its
@@ -71,29 +72,21 @@ try
     win.open;
     win.BackgroundColor = bgRGB;
     win.draw;
-        
+    
     % Set up key listener
     ListenChar(2);
     FlushEvents;
-    whichStruct = 1;
     
-    % Wait until start time
-    if (waitToStart)
-        while (datenum(datestr(now,'HH:MM'),'HH:MM')-datenum(startTime,'HH:MM') < 0)
-        end
-    end
-    
-    % Cycle through stimulus types until someone hits q
-    whichStim = 1;
-    quit = false;
-    while true
-        % Do whatever for the given stimulus type
-        switch stimStructs{stimCycle(whichStim)}.type
+    % Initialize for each stimulus type actually used
+    whichStructsUsed = unique(stimCycle);
+    for ss = 1:length(whichStructsUsed)
+        fprintf('Initializing stimulus type %d ...',ss);
+        stimStruct = stimStructs(whichStructsUsed(ss));
+        switch stimStruct.type
             case 'static'
                 
             case 'drifting'
                 % Initialize drifting grating
-                stimStruct = stimStructs{stimCycle(whichStim)};
                 phases = linspace(0,360,stimStruct.nPhases);
                 for ii = 1:stimStruct.nPhases
                     % Make gabor in each phase
@@ -111,10 +104,48 @@ try
                     clear gaborrgb
                     
                     % Add the images to the window.
-                    win.addImage([stimStruct.xdist stimStruct.ydist], [pixelSize pixelSize], gaborRGB{ii}, 'Name',sprintf('theGabor%d',ii));
+                    win.addImage([stimStruct.xdist stimStruct.ydist], [pixelSize pixelSize], gaborRGB{ii}, 'Name',sprintf('%s%d',stimStruct.name,ii));
                     clear gaborRGB
                 end
-
+            otherwise
+                error('Unknown stimulus type specified');
+        end
+        fprintf(' done\n');
+    end
+    
+    % Wait until start time
+    if (waitToStart)
+        fprintf('Waiting until specified start time of day, hit space to override ...');
+        while (datenum(datestr(now,'HH:MM'),'HH:MM')-datenum(startTime,'HH:MM') < 0)
+            % Check whether key was hit, start if ' '
+            key = 'z';
+            if (CharAvail)
+                key = GetChar;
+            end
+            switch key
+                case ' '
+                    break;
+                otherwise
+            end
+        end
+        fprintf(' done\n');
+    end
+    fprintf('Starting stimulus cycling\n');
+    
+    % Cycle through stimulus types until someone hits q
+    whichStim = 1;
+    nStim = length(stimCycle);
+    quit = false;
+    while true
+        % Get current stimulus struct
+        stimStruct = stimStructs{stimCycle(whichStim)};
+        
+        % Display.  Assumes already initialized
+        switch stimStruct.type
+            case 'static'
+                
+            case 'drifting'
+                
                 % Temporal params
                 framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 
@@ -128,8 +159,8 @@ try
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         if (flicker)
-                            win.disableObject(sprintf('theGabor%d',oldPhase));
-                            win.enableObject(sprintf('theGabor%d',whichPhase));
+                            win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
+                            win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
                             oldPhase = whichPhase;
                             whichPhase = whichPhase + 1;
                             if (whichPhase > stimStruct.nPhases)
@@ -156,18 +187,7 @@ try
                         otherwise
                     end
                 end
-                
-                % Clean up this stimulus
-                %
-                % Put up static background
-                
-                
-                % Delete the images from the window.
-                for ii = 1:stimStruct.nPhases
-                    win.deleteObject(sprintf('theGabor%d',ii));
-                    clear gaborRGB
-                end
-                
+                            
                 % If we're quiting break out of stimulus loop too
                 if (quit)
                     break;
@@ -193,7 +213,7 @@ try
     win.close;
     ListenChar(0);
     
-% Error handler
+    % Error handler
 catch e
     ListenChar(0);
     if ~isempty(win)
