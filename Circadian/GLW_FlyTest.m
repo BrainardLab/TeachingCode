@@ -81,8 +81,8 @@ try
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
-    rowSize = screenDims(1);
-    colSize = screenDims(2);
+    colSize = screenDims(1);
+    rowSize = screenDims(2);
     pixelSize = min(screenDims);
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
@@ -118,7 +118,7 @@ try
                     clear gaborrgb
                     
                     % Add the images to the window.
-                    win.addImage([stimStruct.xdist stimStruct.ydist], [pixelSize pixelSize], gaborRGB{ii}, 'Name',sprintf('%s%d',stimStruct.name,ii));
+                    win.addImage([stimStruct.xdist stimStruct.ydist], [colSize rowSize], gaborRGB{ii}, 'Name',sprintf('%s%d',stimStruct.name,ii));
                     win.disableObject(sprintf('%s%d',stimStruct.name,ii));
                     clear gaborRGB
                 end
@@ -350,7 +350,7 @@ function theGabor = createGabor(rowSize,colSize,contrast,sf,theta,phase,sigma)
 if rem(rowSize,2) ~= 0 | rem(colSize,2) ~= 0
     error('row/col sizes must be an even integers');
 end
-res = [rowSize colSize];
+res = [colSize rowSize];
 xCenter=res(1)/2;
 yCenter=res(2)/2;
 [gab_x gab_y] = meshgrid(0:(res(1)-1), 0:(res(2)-1));
