@@ -77,7 +77,7 @@ try
     % screen dimensions in pixels.  Using these to open the GLWindow keeps
     % the aspect ratio of stuff correct.
     fullScreen = false;
-    debugNoTiming = true;
+    debugNoTiming = false;
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
