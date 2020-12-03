@@ -58,20 +58,15 @@ try
     stimStruct.name = 'Circles';
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.5;
-    stimStruct.nPhases = 100;
+    stimStruct.nSizes = 100;
     stimStruct.contrast = 1;
-    stimStruct.sine = false;
-    stimStruct.sigma = Inf;
-    stimStruct.theta = 0;
-    stimStruct.xdist = 0;
-    stimStruct.ydist = 0;
     stimStruct.bgRGB = bgRGB;
     stimStructs{3} = stimStruct;
     
     % Stimulus cycle time info
     waitToStart = false;
     startTime = 15:45;
-    stimCycle = [1 2];
+    stimCycle = [1 2 3];
     stimDurationsHours = [0.1];
     stimDurationsSecs = stimDurationsHours*3600;
     stimDurationsSecs = [10 10 10];
@@ -129,7 +124,7 @@ try
                 theSizes = linspace(1,pixelSize,stimStruct.nSizes/2);
                 
                 % White square
-                win.addRect([0 0],[pixelSize pixelSize],[contrast contrast contrast],...
+                win.addRectangle([0 0],[pixelSize pixelSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
                     'Name', sprintf('%sSquare',stimStruct.name));
                 
                 % Circles of increasing then decreasing size
@@ -137,14 +132,14 @@ try
                 for ii = 1:stimStruct.nSizes/2
                     win.addOval([0 0], ...  % Center position
                         [theSizes(ii) theSizes(ii)], ...                 % Width, Height of oval
-                        [1-contrast 1-contrast 1-contrast], ...          % RGB color
+                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
                         'Name', sprintf('%sCircle%d',stimStruct.name,whichCircle));     % Tag associated with this oval.
                     whichCircle = whichCircle+1;
                 end
                 for ii = stimStruct.nSizes/2:-1:1
                     win.addOval([0 0], ...  % Center position
                         [theSizes(ii) theSizes(ii)], ...                 % Width, Height of oval
-                        [1-contrast 1-contrast 1-contrast], ...          % RGB color
+                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
                         'Name', sprintf('%sCircle%d',stimStruct.name,whichCircle));     % Tag associated with this oval.
                     whichCircle = whichCircle+1;
                 end
@@ -245,7 +240,7 @@ try
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         win.disableObject(sprintf('%sCircle%d',stimStruct.name,oldSize));
-                        win.enableObject(sprintf('%sCircl%d',stimStruct.name,whichSize));
+                        win.enableObject(sprintf('%sCircle%d',stimStruct.name,whichSize));
                         oldSize = whichSize;
                         whichSize = whichSize + 1;
                         if (whichSize > stimStruct.nSizes)
