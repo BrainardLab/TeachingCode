@@ -82,16 +82,18 @@ try
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
     colSize = screenDims(1);
+    halfColSize = colSize/2;
     rowSize = screenDims(2);
-    pixelSize = min(screenDims);
+   circleSize = min(screenDims)/2;
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
     win.BackgroundColor = bgRGB;
     win.draw;
     
-    % Set up key listener
-    ListenChar(2);
-    FlushEvents;
+    % Convenience check
+    if (rem(colSize,4) ~= 0 | rem(rowSize,2) ~= 2)
+        error('Col size must be a multiple of 4, and row size a multiple of 2');
+    end
     
     % Initialize for each stimulus type actually used
     whichStructsUsed = unique(stimCycle);
@@ -125,37 +127,38 @@ try
                 
             case 'looming'
                 % Compute sizes and create circle of each size
-                theSizes = linspace(1,pixelSize,stimStruct.nSizes/2);
-                
+                theSizesL = [linspace(circleSize/2,circleSize,stimStruct.nSizes/4) linspace(circleSize,1,stimStruct.nSizes/2) linspace(1,circleSize/2,stimStruct.nSizes/4)];
+                theSizesR = [linspace(circleSize/2,1,stimStruct.nSizes/4) linspace(1,circleSize,stimStruct.nSizes/2) linspace(circleSize,circleSize/2,stimStruct.nSizes/4)];
+
                 % White square
-                win.addRectangle([0 0],[pixelSize pixelSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
+                win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
                     'Name', sprintf('%sSquare',stimStruct.name));
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
 
                 % Circles of increasing then decreasing size
-                whichCircle = 1;
-                for ii = 1:stimStruct.nSizes/2
-                    win.addOval([0 0], ...                                                                % Center position
-                        [theSizes(ii) theSizes(ii)], ...                                                  % Width, Height of oval
+                for ii = 1:stimStruct.nSizes
+                    win.addOval([-halfColSize 0], ...                                                     % Center position
+                        [theSizesL(ii) theSizesL(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sCircle%d',stimStruct.name,whichCircle));                       % Tag associated with this oval.
-                    win.disableObject(sprintf('%sCircle%d',stimStruct.name,whichCircle));
-                    whichCircle = whichCircle+1;
-                end
-                for ii = stimStruct.nSizes/2:-1:1
-                    win.addOval([0 0], ...                                                                % Center position
-                        [theSizes(ii) theSizes(ii)], ...                                                  % Width, Height of oval
+                        'Name', sprintf('%sCircleL%d',stimStruct.name,ii));                               % Tag associated with this oval.
+                    win.disableObject(sprintf('%sCircleR%d',stimStruct.name,ii));
+                    win.addOval([halfColSize 0], ...                                                      % Center position
+                        [theSizesR(ii) theSizesR(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sCircle%d',stimStruct.name,whichCircle));                       % Tag associated with this oval.
-                    win.disableObject(sprintf('%sCircle%d',stimStruct.name,whichCircle));
-                    whichCircle = whichCircle+1;
+                        'Name', sprintf('%sCircleL%d',stimStruct.name,ii));                               % Tag associated with this oval.
+                    win.disableObject(sprintf('%sCircleL%d',stimStruct.name,ii));
                 end
-                
+                      
             otherwise
                 error('Unknown stimulus type specified');
         end
         fprintf(' done\n');
     end
+    
+        
+    % Set up key listener
+    ListenChar(2);
+    FlushEvents;
     
     % Wait until start time
     if (waitToStart)
@@ -255,8 +258,11 @@ try
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
-                        win.disableObject(sprintf('%sCircle%d',stimStruct.name,oldSize));
-                        win.enableObject(sprintf('%sCircle%d',stimStruct.name,whichSize));
+                        win.disableObject(sprintf('%sCircleL%d',stimStruct.name,oldSize));
+                        win.disableObject(sprintf('%sCircleR%d',stimStruct.name,oldSize));
+                        win.enableObject(sprintf('%sCircleL%d',stimStruct.name,whichSize));
+                        win.enableObject(sprintf('%sCircleR%d',stimStruct.name,whichSize));
+                        
                         oldSize = whichSize;
                         whichSize = whichSize + 1;
                         if (whichSize > stimStruct.nSizes)
@@ -287,8 +293,9 @@ try
                 
                 % Clean
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
-                win.disableObject(sprintf('%sCircle%d',stimStruct.name,oldSize));
-                
+                win.disableObject(sprintf('%sCircleL%d',stimStruct.name,oldSize));
+                win.disableObject(sprintf('%sCircleR%d',stimStruct.name,oldSize));
+
                 % If we're quiting break out of stimulus loop too
                 if (quit)
                     win.enableObject(sprintf('%sSquare',stimStruct.name));
