@@ -19,7 +19,7 @@ try
     % Setting to false controls things for development/debugging.
     fullScreen = true;
     regularTiming = true;
-    hideCursor = true;
+    hideCursor = false;
     
     % Set initial background at roughly half the
     % dispaly maximum luminance.
@@ -200,6 +200,11 @@ try
         stimStruct = stimStructs{stimCycle(whichStim)};
         stimShownList(allStimIndex) = stimCycle(whichStim);
         
+        % Set up drawtimes
+        whichDraw = 1;
+        maxDraws = round(frameRate*(stimDurationsSecs(whichStim)+1));
+        drawTimes{allStimIndex} = NaN*ones(1,maxDraws);
+        
         % Display.  Assumes already initialized
         startSecs = GetSecs;
         stimShownStartTimes(allStimIndex) = startSecs;
@@ -231,6 +236,9 @@ try
                         end
                     end
                     win.draw;
+                    drawTimes{allStimIndex}(whichDraw) = GetSecs;
+                    whichDraw = whichDraw+1;
+
                     whichFrame = whichFrame + 1;
                     if (whichFrame > framesPerPhase)
                         whichFrame = 1;
@@ -334,12 +342,16 @@ try
         end
     end
     
+    % Save data
+    filename = ['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')];
+    save(filename);
+    
     % We're done, or we quit, clean up and exit
     win.close;
     ListenChar(0);
     mglDisplayCursor(1);
     
-    % Error handler
+% Error handler
 catch e
     if ~isempty(win)
         win.close;
