@@ -13,7 +13,13 @@ function GLW_FlyTest
 
 try
     % Initialize
-    close all;
+    close all; win = [];
+    
+    % Control flow parameters.  Set these to true for regular running.
+    % Setting to false controls things for development/debugging.
+    fullScreen = false;
+    regularTiming = true;
+    hideCursor = true;
     
     % Set initial background at roughly half the
     % dispaly maximum luminance.
@@ -76,15 +82,22 @@ try
     % Choose the last attached screen as our target screen, and figure out its
     % screen dimensions in pixels.  Using these to open the GLWindow keeps
     % the aspect ratio of stuff correct.
+<<<<<<< Updated upstream
     fullScreen = true;
     debugNoTiming = false;
+=======
+>>>>>>> Stashed changes
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
+<<<<<<< Updated upstream
     circleSize = min(screenDims);
+=======
+    circleSize = min(screenDims)/2;
+>>>>>>> Stashed changes
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
     win.BackgroundColor = bgRGB;
@@ -136,6 +149,8 @@ try
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
 
                 % Circles of increasing then decreasing size
+                minArea = 0;
+                    maxArea = pi((
                 for ii = 1:stimStruct.nSizes
                     win.addOval([-halfColSize/2 0], ...                                                     % Center position
                         [theSizesL(ii) theSizesL(ii)], ...                                                % Width, Height of oval
@@ -154,11 +169,15 @@ try
         end
         fprintf(' done\n');
     end
-    
-        
+     
     % Set up key listener
     ListenChar(2);
     FlushEvents;
+    
+    % Hide cursor
+    if (hideCursor)
+        mglDisplayCursor(0);
+    end
     
     % Wait until start time
     if (waitToStart)
@@ -192,7 +211,7 @@ try
         % Display.  Assumes already initialized
         startSecs = GetSecs;
         stimShownStartTimes(allStimIndex) = startSecs;
-        if (debugNoTiming)
+        if (~regularTiming)
             finishSecs = Inf;
         else
             finishSecs = startSecs + stimDurationsSecs(whichStim);
@@ -322,10 +341,12 @@ try
     % We're done, or we quit, clean up and exit
     win.close;
     ListenChar(0);
+    mglDisplayCursor(1);
     
     % Error handler
 catch e
     ListenChar(0);
+    mglDisplayCursor(1);
     if ~isempty(win)
         win.close;
     end
