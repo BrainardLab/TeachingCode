@@ -21,6 +21,9 @@ try
     regularTiming = true;
     hideCursor = false;
     
+    % Path to data files
+    dataDir = 'data';
+    
     % Set initial background at roughly half the
     % dispaly maximum luminance.
     % bgRGB = [173 173 173]/255;
@@ -343,7 +346,7 @@ try
     end
     
     % Save data
-    filename = ['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')];
+    filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
     save(filename);
     
     % We're done, or we quit, clean up and exit
