@@ -4,7 +4,7 @@
 clear; close all;
 
 % Load data
-load('/Users/dhb/Documents/MATLAB/projects/TeachingCode/Circadian/data/theData_2020-12-05_15:11:35.mat')
+load('/Users/dhb/Documents/MATLAB/projects/TeachingCode/Circadian/data/theData_Temp')
 
 % Plot frame times for each run
 nRuns = length(drawTimes);

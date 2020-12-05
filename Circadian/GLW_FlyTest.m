@@ -24,6 +24,8 @@ try
     fullScreen = false;
     regularTiming = true;
     hideCursor = false;
+    waitUntilToStartTime = false;
+
     
     % Path to data files
     dataDir = 'data';
@@ -36,7 +38,7 @@ try
     % Static struct
     clear stimStruct
     stimStruct.type = 'drifting';
-    stimStruct.name = 'Background';
+    stimStruct.name = 'BackgroundBars';
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.5;
     stimStruct.nPhases = 1;
@@ -46,13 +48,14 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
+    stimStruct.reverseProb = 0.1;
     stimStruct.bgRGB = bgRGB;
     stimStructs{1} = stimStruct;
     
     % Drifting grating struct
     clear stimStruct;
     stimStruct.type = 'drifting';
-    stimStruct.name = 'Gabor';
+    stimStruct.name = 'Bars';
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
@@ -62,8 +65,20 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
+    stimStruct.reverseProb = 0.1;
     stimStruct.bgRGB = bgRGB;
     stimStructs{2} = stimStruct;
+    
+    % Drifting grating struct
+    clear stimStruct;
+    stimStruct.type = 'looming';
+    stimStruct.name = 'BackgroundCircles';
+    stimStruct.tfHz = 0.25;
+    stimStruct.nSizes = 1;
+    stimStruct.contrast = 1;
+    stimStruct.reverseProb = 0.1;
+    stimStruct.bgRGB = bgRGB;
+    stimStructs{3} = stimStruct;
     
     % Drifting grating struct
     clear stimStruct;
@@ -72,16 +87,16 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.contrast = 1;
+    stimStruct.reverseProb = 0.1;
     stimStruct.bgRGB = bgRGB;
     stimStructs{3} = stimStruct;
     
     % Stimulus cycle time info
-    waitToStart = false;
     startTime = 15:45;
-    stimCycle = [1 2 3];
-    stimDurationsHours = [0.1];
-    stimDurationsSecs = stimDurationsHours*3600;
-    stimDurationsSecs = [10 10 10];
+    stimCycle = [1 2 3 4];
+    stimDurationsSecs = [10 10 10 10];
+    stimRepeats = 3;
+    
     
     % Open the window
     %
@@ -112,6 +127,12 @@ try
         stimStruct = stimStructs{whichStructsUsed(ss)};
         switch stimStruct.type
             case 'drifting'
+                % Check number of cycles relative to row size
+                if (rem(rowSize,2*stimStruct.sfCyclesImage) ~= 0)
+                    fprintf('Row size %d, cycles/image %d\n',rowSize,stimStruct.sfCyclesImage);
+                    error('Two times cycles/image must evenly divide row size');
+                end
+                
                 % Initialize drifting grating
                 phases = linspace(0,360,stimStruct.nPhases);
                 for ii = 1:stimStruct.nPhases
@@ -138,7 +159,9 @@ try
             case 'looming'                            
                 % Compute sizes and create circle of each size, equally
                 % space by area.
-                minArea = pi*(0.5)^2; maxArea = pi*(circleSize/2)^2; halfArea = maxArea/2;                 
+                fullSize = rowSize*colSize;
+                minRadius = 0;
+                halfArea = fullSize/4;   minArea = pi*(minRadius/2)^2; maxArea = 2*halfArea;               
                 theAreasL = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
                 theAreasR = [linspace(halfArea,minArea,stimStruct.nSizes/4) linspace(minArea,maxArea,stimStruct.nSizes/2) linspace(maxArea,halfArea,stimStruct.nSizes/4)];
                 theSizesL = 2*sqrt(theAreasL/pi);
@@ -179,7 +202,7 @@ try
     end
     
     % Wait until start time
-    if (waitToStart)
+    if (waitUntilToStartTime)
         fprintf('Waiting until specified start time of day, hit space to override ...');
         while (datenum(datestr(now,'HH:MM'),'HH:MM')-datenum(startTime,'HH:MM') < 0)
             % Check whether key was hit, start if ' '
@@ -197,12 +220,12 @@ try
     end
     fprintf('Starting stimulus cycling\n');
     
-    % Cycle through stimulus types until someone hits q
+    % Cycle through stimulus types until number of repetions reached or someone hits q
     allStimIndex = 1;
     whichStim = 1;
     nStim = length(stimCycle);
     quit = false;
-    while true
+    for rr = 1:(stimRepeats*length(stimCycles));
         % Get current stimulus struct
         stimStruct = stimStructs{stimCycle(whichStim)};
         stimShownList(allStimIndex) = stimCycle(whichStim);
@@ -231,15 +254,26 @@ try
                 % Drift the grating according to the grating's parameters
                 whichPhase = 1;
                 whichFrame = 1;
+                phaseAdjust = 1;
                 oldPhase = stimStruct.nPhases;
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
                         win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
                         oldPhase = whichPhase;
-                        whichPhase = whichPhase + 1;
+                        whichPhase = whichPhase + phaseAdjust;
                         if (whichPhase > stimStruct.nPhases)
                             whichPhase = 1;
+                        end
+                        if (whichPhase < 1)
+                            whichPhase = stimStruct.nPhases;
+                        end
+                        if (CoinFlip(stimStruct.reverseProb))
+                            if (phaseAdjust == 1)
+                                phaseAdjust = -1;
+                            else
+                                phaseAdjust = 1;
+                            end
                         end
                     end
                     win.draw;
@@ -286,6 +320,7 @@ try
                 whichFrame = 1;
                 oldSize = stimStruct.nSizes;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
+                sizeAdjust = 1;
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         win.disableObject(sprintf('%sL%d',stimStruct.name,oldSize));
@@ -294,9 +329,19 @@ try
                         win.enableObject(sprintf('%sR%d',stimStruct.name,whichSize));
                         
                         oldSize = whichSize;
-                        whichSize = whichSize + 1;
+                        whichSize = whichSize + sizeAdjust;
                         if (whichSize > stimStruct.nSizes)
                             whichSize = 1;
+                        end
+                        if (whichSize < 1)
+                            whichSize = stimStruct.nSizes;
+                        end
+                        if (CoinFlip(stimStruct.reverseProb))
+                            if (sizeAdjust == 1)
+                                sizeAdjust = -1;
+                            else
+                                sizeAdjust = 1;
+                            end
                         end
                     end
                     win.draw;
