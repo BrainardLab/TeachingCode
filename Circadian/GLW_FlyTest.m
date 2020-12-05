@@ -354,7 +354,8 @@ try
     end
     
     % Save data
-    filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
+    % filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
+    filename = fullfile(dataDir,['theData_Temp')]);
     save(filename);
     
     % We're done, or we quit, clean up and exit
