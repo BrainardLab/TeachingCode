@@ -16,7 +16,8 @@ try
     close all; win = [];
     
     % Cd to directory containing this function
-    cd(mfilename('fullpath'));
+    [a,b] = fileparts(mfilename('fullpath'));
+    cd(a);
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
@@ -355,7 +356,7 @@ try
     
     % Save data
     % filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
-    filename = fullfile(dataDir,['theData_Temp')]);
+    filename = fullfile(dataDir,['theData_Temp']);
     save(filename);
     
     % We're done, or we quit, clean up and exit
