@@ -17,7 +17,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = false;
+    fullScreen = true;
     regularTiming = true;
     hideCursor = true;
     
@@ -47,8 +47,8 @@ try
     stimStruct.type = 'drifting';
     stimStruct.name = 'Gabor';
     stimStruct.sfCyclesImage = 2;
-    stimStruct.tfHz = 0.5;
-    stimStruct.nPhases = 60;
+    stimStruct.tfHz = 0.25;
+    stimStruct.nPhases = 120;
     stimStruct.contrast = 1;
     stimStruct.sine = false;
     stimStruct.sigma = Inf;
@@ -62,9 +62,8 @@ try
     clear stimStruct;
     stimStruct.type = 'looming';
     stimStruct.name = 'Circles';
-    stimStruct.sfCyclesImage = 2;
-    stimStruct.tfHz = 0.5;
-    stimStruct.nSizes = 60;
+    stimStruct.tfHz = 0.25;
+    stimStruct.nSizes = 240;
     stimStruct.contrast = 1;
     stimStruct.bgRGB = bgRGB;
     stimStructs{3} = stimStruct;
@@ -215,7 +214,7 @@ try
                 % Temporal params
                 framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 fprintf('Running at %d frames per phase, frame rate %d Hz, %0.2f cycles/sec\n', ...
-                    stimStruct.tfHz/(stimStruct.nPhases*framesPerPhase));
+                    framesPerPhase,frameRate,frameRate/(stimStruct.nPhases*framesPerPhase));
                 
                 % Drift the grating according to the grating's parameters
                 whichPhase = 1;
@@ -265,7 +264,7 @@ try
                 % Temporal params
                 framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nSizes);
                 fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
-                    stimStruct.tfHz/(stimStruct.nPhases*framesPerSize));
+                    framesPerSize,frameRate,frameRate/(stimStruct.nSizes*framesPerSize));
                 
                 % Drift the grating according to the grating's parameters
                 whichSize = 1;
@@ -342,11 +341,11 @@ try
     
     % Error handler
 catch e
-    ListenChar(0);
-    mglDisplayCursor(1);
     if ~isempty(win)
         win.close;
     end
+    ListenChar(0);
+    mglDisplayCursor(1);
     rethrow(e);
 end
 
