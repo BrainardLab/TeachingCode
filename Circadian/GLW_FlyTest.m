@@ -299,6 +299,9 @@ try
                         end
                     end
                     win.draw;
+                    drawTimes{allStimIndex}(whichDraw) = GetSecs;
+                    whichDraw = whichDraw+1;
+                    
                     whichFrame = whichFrame + 1;
                     if (whichFrame > framesPerSize)
                         whichFrame = 1;
@@ -312,6 +315,7 @@ try
                     end
                     switch key
                         case 'q'
+                            stimShownFinishTimes(allStimIndex) = GetSecs;
                             quit = true;
                             break;
                         case ' '
@@ -333,6 +337,7 @@ try
             otherwise
                 error('Unknown stimulus type specified');
         end
+        
         stimShownFinishTimes(allStimIndex) = GetSecs;
         allStimIndex = allStimIndex + 1;
         
