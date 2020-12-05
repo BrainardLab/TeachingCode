@@ -82,22 +82,13 @@ try
     % Choose the last attached screen as our target screen, and figure out its
     % screen dimensions in pixels.  Using these to open the GLWindow keeps
     % the aspect ratio of stuff correct.
-<<<<<<< Updated upstream
-    fullScreen = true;
-    debugNoTiming = false;
-=======
->>>>>>> Stashed changes
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
     screenDims = d(end).screenSizePixel;
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
-<<<<<<< Updated upstream
     circleSize = min(screenDims);
-=======
-    circleSize = min(screenDims)/2;
->>>>>>> Stashed changes
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
     win.BackgroundColor = bgRGB;
@@ -127,7 +118,7 @@ try
                     end
                     
                     % Convert to RGB
-                    [calForm1 c1 r1] = ImageToCalFormat(gaborrgb{ii});
+                    [calForm1, c1, r1] = ImageToCalFormat(gaborrgb{ii});
                     RGB = calForm1;
                     gaborRGB{ii} = CalFormatToImage(RGB,c1,r1);
                     clear gaborrgb
@@ -138,10 +129,14 @@ try
                     clear gaborRGB
                 end
                 
-            case 'looming'
-                % Compute sizes and create circle of each size
-                theSizesL = [linspace(circleSize/2,circleSize,stimStruct.nSizes/4) linspace(circleSize,1,stimStruct.nSizes/2) linspace(1,circleSize/2,stimStruct.nSizes/4)];
-                theSizesR = [linspace(circleSize/2,1,stimStruct.nSizes/4) linspace(1,circleSize,stimStruct.nSizes/2) linspace(circleSize,circleSize/2,stimStruct.nSizes/4)];
+            case 'looming'                            
+                % Compute sizes and create circle of each size, equally
+                % space by area.
+                minArea = pi*(0.5)^2; maxArea = pi*(circleSize/2)^2; halfArea = maxArea/2;                 
+                theAreasL = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
+                theAreasR = [linspace(halfArea,minArea,stimStruct.nSizes/4) linspace(minArea,maxArea,stimStruct.nSizes/2) linspace(maxArea,halfArea,stimStruct.nSizes/4)];
+                theSizesL = 2*sqrt(theAreasL/pi);
+                theSizesR = 2*sqrt(theAreasR/pi);
 
                 % White square
                 win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
@@ -149,15 +144,13 @@ try
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
 
                 % Circles of increasing then decreasing size
-                minArea = 0;
-                    maxArea = pi((
                 for ii = 1:stimStruct.nSizes
-                    win.addOval([-halfColSize/2 0], ...                                                     % Center position
+                    win.addOval([-halfColSize/2 0], ...                                                   % Center position
                         [theSizesL(ii) theSizesL(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sL%d',stimStruct.name,ii));                               % Tag associated with this oval.
+                        'Name', sprintf('%sL%d',stimStruct.name,ii));                                     % Tag associated with this oval.
                     win.disableObject(sprintf('%sL%d',stimStruct.name,ii));
-                    win.addOval([halfColSize/2 0], ...                                                      % Center position
+                    win.addOval([halfColSize/2 0], ...                                                     % Center position
                         [theSizesR(ii) theSizesR(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
                         'Name', sprintf('%sR%d',stimStruct.name,ii));                               % Tag associated with this oval.
@@ -221,6 +214,8 @@ try
             case 'drifting'
                 % Temporal params
                 framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
+                fprintf('Running at %d frames per phase, frame rate %d Hz, %0.2f cycles/sec\n', ...
+                    stimStruct.tfHz/(stimStruct.nPhases*framesPerPhase));
                 
                 % Drift the grating according to the grating's parameters
                 whichPhase = 1;
@@ -269,6 +264,8 @@ try
             case 'looming'
                 % Temporal params
                 framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nSizes);
+                fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
+                    stimStruct.tfHz/(stimStruct.nPhases*framesPerSize));
                 
                 % Drift the grating according to the grating's parameters
                 whichSize = 1;
