@@ -42,7 +42,7 @@ try
     stimStruct.name = 'Gabor';
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.5;
-    stimStruct.nPhases = 100;
+    stimStruct.nPhases = 60;
     stimStruct.contrast = 1;
     stimStruct.sine = false;
     stimStruct.sigma = Inf;
@@ -58,7 +58,7 @@ try
     stimStruct.name = 'Circles';
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.5;
-    stimStruct.nSizes = 100;
+    stimStruct.nSizes = 60;
     stimStruct.contrast = 1;
     stimStruct.bgRGB = bgRGB;
     stimStructs{3} = stimStruct;
@@ -76,7 +76,7 @@ try
     % Choose the last attached screen as our target screen, and figure out its
     % screen dimensions in pixels.  Using these to open the GLWindow keeps
     % the aspect ratio of stuff correct.
-    fullScreen = false;
+    fullScreen = true;
     debugNoTiming = false;
     d = mglDescribeDisplays;
     frameRate = d.refreshRate;
@@ -84,14 +84,14 @@ try
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
-   circleSize = min(screenDims)/2;
+    circleSize = min(screenDims);
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     win.open;
     win.BackgroundColor = bgRGB;
     win.draw;
     
     % Convenience check
-    if (rem(colSize,4) ~= 0 | rem(rowSize,2) ~= 2)
+    if (rem(colSize,4) ~= 0 | rem(rowSize,2) ~= 0)
         error('Col size must be a multiple of 4, and row size a multiple of 2');
     end
     
@@ -137,16 +137,16 @@ try
 
                 % Circles of increasing then decreasing size
                 for ii = 1:stimStruct.nSizes
-                    win.addOval([-halfColSize 0], ...                                                     % Center position
+                    win.addOval([-halfColSize/2 0], ...                                                     % Center position
                         [theSizesL(ii) theSizesL(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sCircleL%d',stimStruct.name,ii));                               % Tag associated with this oval.
-                    win.disableObject(sprintf('%sCircleR%d',stimStruct.name,ii));
-                    win.addOval([halfColSize 0], ...                                                      % Center position
+                        'Name', sprintf('%sL%d',stimStruct.name,ii));                               % Tag associated with this oval.
+                    win.disableObject(sprintf('%sL%d',stimStruct.name,ii));
+                    win.addOval([halfColSize/2 0], ...                                                      % Center position
                         [theSizesR(ii) theSizesR(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sCircleL%d',stimStruct.name,ii));                               % Tag associated with this oval.
-                    win.disableObject(sprintf('%sCircleL%d',stimStruct.name,ii));
+                        'Name', sprintf('%sR%d',stimStruct.name,ii));                               % Tag associated with this oval.
+                    win.disableObject(sprintf('%sR%d',stimStruct.name,ii));
                 end
                       
             otherwise
@@ -258,10 +258,10 @@ try
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
-                        win.disableObject(sprintf('%sCircleL%d',stimStruct.name,oldSize));
-                        win.disableObject(sprintf('%sCircleR%d',stimStruct.name,oldSize));
-                        win.enableObject(sprintf('%sCircleL%d',stimStruct.name,whichSize));
-                        win.enableObject(sprintf('%sCircleR%d',stimStruct.name,whichSize));
+                        win.disableObject(sprintf('%sL%d',stimStruct.name,oldSize));
+                        win.disableObject(sprintf('%sR%d',stimStruct.name,oldSize));
+                        win.enableObject(sprintf('%sL%d',stimStruct.name,whichSize));
+                        win.enableObject(sprintf('%sR%d',stimStruct.name,whichSize));
                         
                         oldSize = whichSize;
                         whichSize = whichSize + 1;
@@ -293,13 +293,11 @@ try
                 
                 % Clean
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
-                win.disableObject(sprintf('%sCircleL%d',stimStruct.name,oldSize));
-                win.disableObject(sprintf('%sCircleR%d',stimStruct.name,oldSize));
+                win.disableObject(sprintf('%sL%d',stimStruct.name,oldSize));
+                win.disableObject(sprintf('%sR%d',stimStruct.name,oldSize));
 
                 % If we're quiting break out of stimulus loop too
                 if (quit)
-                    win.enableObject(sprintf('%sSquare',stimStruct.name));
-                    win.disableObject(sprintf('%sCircle%d',stimStruct.name,oldSize));
                     break;
                 end
                 
