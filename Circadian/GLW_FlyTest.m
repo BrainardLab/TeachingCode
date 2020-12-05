@@ -89,11 +89,11 @@ try
     stimStruct.contrast = 1;
     stimStruct.reverseProb = 0.1;
     stimStruct.bgRGB = bgRGB;
-    stimStructs{3} = stimStruct;
+    stimStructs{4} = stimStruct;
     
     % Stimulus cycle time info
     startTime = 15:45;
-    stimCycle = [1 2 3 4];
+    stimCycles = [1 2 3 4];
     stimDurationsSecs = [10 10 10 10];
     stimRepeats = 3;
     
@@ -121,7 +121,7 @@ try
     end
     
     % Initialize for each stimulus type actually used
-    whichStructsUsed = unique(stimCycle);
+    whichStructsUsed = unique(stimCycles);
     for ss = 1:length(whichStructsUsed)
         fprintf('Initializing stimulus type %d ...',ss);
         stimStruct = stimStructs{whichStructsUsed(ss)};
@@ -160,10 +160,14 @@ try
                 % Compute sizes and create circle of each size, equally
                 % space by area.
                 fullSize = rowSize*colSize;
-                minRadius = 0;
-                halfArea = fullSize/4;   minArea = pi*(minRadius/2)^2; maxArea = 2*halfArea;               
+                minRadius = 1;
+                halfArea = fullSize/4;   minArea = pi*(minRadius/2)^2; maxArea = 2*halfArea;  
+                if (stimStruct.nSizes == 1)
+                    theAreasL = halfArea; theAreasR = halfArea;
+                else
                 theAreasL = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
                 theAreasR = [linspace(halfArea,minArea,stimStruct.nSizes/4) linspace(minArea,maxArea,stimStruct.nSizes/2) linspace(maxArea,halfArea,stimStruct.nSizes/4)];
+                end
                 theSizesL = 2*sqrt(theAreasL/pi);
                 theSizesR = 2*sqrt(theAreasR/pi);
 
@@ -223,12 +227,12 @@ try
     % Cycle through stimulus types until number of repetions reached or someone hits q
     allStimIndex = 1;
     whichStim = 1;
-    nStim = length(stimCycle);
+    nStim = length(stimCycles);
     quit = false;
     for rr = 1:(stimRepeats*length(stimCycles));
         % Get current stimulus struct
-        stimStruct = stimStructs{stimCycle(whichStim)};
-        stimShownList(allStimIndex) = stimCycle(whichStim);
+        stimStruct = stimStructs{stimCycles(whichStim)};
+        stimShownList(allStimIndex) = stimCycles(whichStim);
         
         % Set up drawtimes
         whichDraw = 1;
@@ -268,7 +272,7 @@ try
                         if (whichPhase < 1)
                             whichPhase = stimStruct.nPhases;
                         end
-                        if (CoinFlip(stimStruct.reverseProb))
+                        if (CoinFlip(1,stimStruct.reverseProb))
                             if (phaseAdjust == 1)
                                 phaseAdjust = -1;
                             else
@@ -336,7 +340,7 @@ try
                         if (whichSize < 1)
                             whichSize = stimStruct.nSizes;
                         end
-                        if (CoinFlip(stimStruct.reverseProb))
+                        if (CoinFlip(1,stimStruct.reverseProb))
                             if (sizeAdjust == 1)
                                 sizeAdjust = -1;
                             else
