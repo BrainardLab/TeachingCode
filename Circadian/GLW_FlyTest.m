@@ -21,7 +21,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = false;
+    fullScreen = true;
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
