@@ -21,7 +21,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = false;
+    fullScreen = true;
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
@@ -90,7 +90,7 @@ try
     % Stimulus cycle time info
     startTime = 15:45;
     stimCycles = [1 2 3 4];
-    stimDurationsSecs = [5 10 5 10];
+    stimDurationsSecs = [10 10 10 10];
     stimRepeats = 3;
     
     % Open the window
@@ -106,7 +106,7 @@ try
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
-    maxCircleSize = min(screenDims)/2;
+    maxCircleSize = min(screenDims)/2 - 10;
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     
     % Check that parameters divide things up properly
@@ -171,7 +171,7 @@ try
                 fullSize = rowSize*colSize;
                 halfArea = fullSize/4;
                 
-                maxAreaTemp = 2*halfArea; maxSizeTemp = 2*sqrt(maxArea/pi);
+                maxAreaTemp = 2*halfArea; maxSizeTemp = 2*sqrt(maxAreaTemp/pi);
                 if (maxSizeTemp > maxCircleSize)
                     maxArea = pi*(maxCircleSize/2)^2;
                 else
