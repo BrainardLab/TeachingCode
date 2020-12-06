@@ -29,10 +29,11 @@ try
     % Path to data files
     dataDir = 'data';
     
-    % Set initial background at roughly half the
-    % dispaly maximum luminance.
-    % bgRGB = [173 173 173]/255;
-    bgRGB = [255 255 255]/255;
+    % Set bg RGB.  This may get covered up in the end and have no effect.
+    bgRGB = [1 1 1];
+    
+    % Reversal parameter
+    probReverse = 0;
     
     % Static struct
     clear stimStruct
@@ -47,8 +48,7 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
-    stimStruct.reverseProb = 0.05;
-    stimStruct.bgRGB = bgRGB;
+    stimStruct.reverseProb = probReverse;
     stimStructs{1} = stimStruct;
     
     % Drifting grating struct
@@ -64,8 +64,7 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
-    stimStruct.reverseProb = 0.05;
-    stimStruct.bgRGB = bgRGB;
+    stimStruct.reverseProb = probReverse;
     stimStructs{2} = stimStruct;
     
     % Drifting grating struct
@@ -75,8 +74,7 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 1;
     stimStruct.contrast = 1;
-    stimStruct.reverseProb = 0.05;
-    stimStruct.bgRGB = bgRGB;
+    stimStruct.reverseProb = probReverse;
     stimStructs{3} = stimStruct;
     
     % Drifting grating struct
@@ -86,37 +84,39 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.contrast = 1;
-    stimStruct.reverseProb = 0.05;
-    stimStruct.bgRGB = bgRGB;
+    stimStruct.reverseProb = probReverse;
     stimStructs{4} = stimStruct;
     
     % Stimulus cycle time info
     startTime = 15:45;
     stimCycles = [1 2 3 4];
-    stimDurationsSecs = [10 10 10 10];
+    stimDurationsSecs = [5 10 5 10];
     stimRepeats = 3;
     
     % Open the window
+    %
+    % And use screen info to get parameters.
     %
     % Choose the last attached screen as our target screen, and figure out its
     % screen dimensions in pixels.  Using these to open the GLWindow keeps
     % the aspect ratio of stuff correct.
     d = mglDescribeDisplays;
-    frameRate = d.refreshRate;
+    frameRate = d(end).refreshRate;
     screenDims = d(end).screenSizePixel;
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
-    circleSize = min(screenDims);
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
-    win.open;
-    win.BackgroundColor = bgRGB;
-    win.draw;
     
-    % Convenience check
+    % Check that parameters divide things up properly
     if (rem(colSize,4) ~= 0 | rem(rowSize,2) ~= 0)
         error('Col size must be a multiple of 4, and row size a multiple of 2');
     end
+    
+    % Open up the window and set background   
+    win.open;
+    win.BackgroundColor = bgRGB;
+    win.draw;
     
     % Initialize for each stimulus type actually used
     whichStructsUsed = unique(stimCycles);
@@ -140,8 +140,11 @@ try
                 % Initialize drifting grating
                 phases = linspace(0,360,stimStruct.nPhases);
                 for ii = 1:stimStruct.nPhases
-                    for cc = 1:stimStruct.sfCyclesImage
-                        win.addRectangle([0 (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2], ...  % Center position
+                    for cc = 0:stimStruct.sfCyclesImage
+                        barPosition = (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2;
+                        fprintf('Row size: %d, barHeight %d, putting bar at offset %d\n',...
+                            rowSize,barHeight,barPosition);     
+                        win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
