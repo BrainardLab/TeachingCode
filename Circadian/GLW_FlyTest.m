@@ -21,7 +21,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = false;
+    fullScreen = true;
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
@@ -48,7 +48,7 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
-    stimStruct.reverseProb = 0.1;
+    stimStruct.reverseProb = 0.05;
     stimStruct.bgRGB = bgRGB;
     stimStructs{1} = stimStruct;
     
@@ -65,7 +65,7 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
-    stimStruct.reverseProb = 0.1;
+    stimStruct.reverseProb = 0.05;
     stimStruct.bgRGB = bgRGB;
     stimStructs{2} = stimStruct;
     
@@ -76,7 +76,7 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 1;
     stimStruct.contrast = 1;
-    stimStruct.reverseProb = 0.1;
+    stimStruct.reverseProb = 0.05;
     stimStruct.bgRGB = bgRGB;
     stimStructs{3} = stimStruct;
     
@@ -87,7 +87,7 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.contrast = 1;
-    stimStruct.reverseProb = 0.1;
+    stimStruct.reverseProb = 0.05;
     stimStruct.bgRGB = bgRGB;
     stimStructs{4} = stimStruct;
     
