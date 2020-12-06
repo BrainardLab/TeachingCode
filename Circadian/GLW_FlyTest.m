@@ -138,18 +138,22 @@ try
                 win.disableObject(sprintf('%sSquare',stimStruct.name))
                 
                 % Initialize drifting grating
-                phases = linspace(0,barHeight,stimStruct.nPhases);
+                if (stimStruct.nPhases == 1)
+                    phases = 0;
+                else
+                    phases = linspace(0,barHeight,stimStruct.nPhases);
+                end
                 for ii = 1:stimStruct.nPhases
                     for cc = 0:stimStruct.sfCyclesImage
                         barPosition = (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2;
-                        fprintf('Row size: %d, barHeight %d, putting black bar %d at offset %d\n',...
+                        fprintf('Row size: %d, barHeight %d, putting black bar %d at offset %0.1f\n',...
                             rowSize,barHeight,cc,barPosition);     
                         win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
                         barPosition = (2*(cc-1)+1)*barHeight+phases(ii)-rowSize/2 + barHeight/2;
-                        fprintf('\tRow size: %d, barHeight %d, putting white bar at offset %d\n',...
+                        fprintf('\tRow size: %d, barHeight %d, putting white bar at offset %0.1f\n',...
                             rowSize,barHeight,barPosition);
                         win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
@@ -169,8 +173,8 @@ try
                 if (stimStruct.nSizes == 1)
                     theAreasL = halfArea; theAreasR = halfArea;
                 else
-                theAreasL = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
-                theAreasR = [linspace(halfArea,minArea,stimStruct.nSizes/4) linspace(minArea,maxArea,stimStruct.nSizes/2) linspace(maxArea,halfArea,stimStruct.nSizes/4)];
+                    theAreasL = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
+                    theAreasR = [linspace(halfArea,minArea,stimStruct.nSizes/4) linspace(minArea,maxArea,stimStruct.nSizes/2) linspace(maxArea,halfArea,stimStruct.nSizes/4)];
                 end
                 theSizesL = 2*sqrt(theAreasL/pi);
                 theSizesR = 2*sqrt(theAreasR/pi);
@@ -416,20 +420,22 @@ try
             whichStim = 1;
         end
     end
+        
+    % We're done, or we quit, clean up and exit
+    if (~isempty(win))
+        win.close; win = [];
+    end
+    ListenChar(0);
+    mglDisplayCursor(1);
     
     % Save data
     % filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
     filename = fullfile(dataDir,['theData_Temp']);
     save(filename);
-    
-    % We're done, or we quit, clean up and exit
-    win.close;
-    ListenChar(0);
-    mglDisplayCursor(1);
-    
+
 % Error handler
 catch e
-    if ~isempty(win)
+    if (~isempty(win))
         win.close;
     end
     ListenChar(0);
