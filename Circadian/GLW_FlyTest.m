@@ -21,7 +21,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = true;
+    fullScreen = false;
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
@@ -132,18 +132,20 @@ try
                 end
                 barHeight = rowSize/(2*stimStruct.sfCyclesImage);
                 
+                % White square
+                win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
+                    'Name', sprintf('%sSquare',stimStruct.name));
+                win.disableObject(sprintf('%sSquare',stimStruct.name))
+                
                 % Initialize drifting grating
                 phases = linspace(0,360,stimStruct.nPhases);
                 for ii = 1:stimStruct.nPhases
                     for cc = 1:stimStruct.sfCyclesImage
-                        win.addRectangle([0 (2*(cc-1))*barHeight+phases(ii)-rowSize/2], ...                % Center position
+                        win.addRectangle([0 (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2], ...  % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
-                        win.addRectangle([0 (2*(cc-1)+1)*barHeight+phases(ii)-rowSize/2], ...              % Center position
-                            [colSize barHeight], ...                                                       % Width, Height of oval
-                            [stimStruct.contrast stimStruct.contrast stimStruct.contrast], ...             % RGB color
-                            'Name', sprintf('%sW%d%d',stimStruct.name,cc,ii));
+                        win.disableObject(sprintf('%sB%%d',stimStruct.name,cc,ii));
                     end
                 end
                 
@@ -248,16 +250,15 @@ try
                 
                 % Drift the grating according to the grating's parameters
                 whichPhase = 1;
-                whichFrame = 1;
+                whichFrame = 1;                
                 phaseAdjust = 1;
                 oldPhase = stimStruct.nPhases;
+                win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         for cc = 1:stimStruct.sfCyclesImage
                             win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
-                            win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase));
                             win.enableObject(sprintf('%sB%d%d',stimStruct.name,cc,whichPhase));
-                            win.enableObject(sprintf('%sW%d%d',stimStruct.name,cc,whichPhase));
                         end
                         oldPhase = whichPhase;
                         whichPhase = whichPhase + phaseAdjust;
@@ -292,6 +293,7 @@ try
                     end
                     switch key
                         case 'q'
+                            stimShownFinishTimes(allStimIndex) = GetSecs;
                             quit = true;
                             break;
                         case ' '
@@ -301,9 +303,9 @@ try
                 end
                 
                 % Clean
+                win.disableObject(sprintf('%sSquare',stimStruct.name));
                 for cc = 1:stimStruct.sfCyclesImage
                     win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
-                    win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase));
                 end
 
                 % If we're quiting break out of stimulus loop too
@@ -321,8 +323,8 @@ try
                 whichSize = 1;
                 whichFrame = 1;
                 oldSize = stimStruct.nSizes;
-                win.enableObject(sprintf('%sSquare',stimStruct.name));
                 sizeAdjust = 1;
+                win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         win.disableObject(sprintf('%sL%d',stimStruct.name,oldSize));
