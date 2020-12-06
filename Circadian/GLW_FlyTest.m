@@ -21,7 +21,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = true;
+    fullScreen = false;
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
@@ -138,12 +138,12 @@ try
                 win.disableObject(sprintf('%sSquare',stimStruct.name))
                 
                 % Initialize drifting grating
-                phases = linspace(0,360,stimStruct.nPhases);
+                phases = linspace(0,barHeight,stimStruct.nPhases);
                 for ii = 1:stimStruct.nPhases
                     for cc = 0:stimStruct.sfCyclesImage
                         barPosition = (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2;
-                        fprintf('Row size: %d, barHeight %d, putting bar at offset %d\n',...
-                            rowSize,barHeight,barPosition);     
+                        fprintf('Row size: %d, barHeight %d, putting bar %d at offset %d\n',...
+                            rowSize,barHeight,cc,barPosition);     
                         win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
