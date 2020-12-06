@@ -269,9 +269,9 @@ try
                     if (whichFrame == 1)
                         for cc = 1:stimStruct.sfCyclesImage
                             win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
-                            win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))
+                            win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase))
                             win.enableObject(sprintf('%sB%d%d',stimStruct.name,cc,whichPhase));
-                            win.enableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))
+                            win.enableObject(sprintf('%sW%d%d',stimStruct.name,cc,whichPhase))
                         end
                         oldPhase = whichPhase;
                         whichPhase = whichPhase + phaseAdjust;
@@ -319,7 +319,7 @@ try
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
                 for cc = 1:stimStruct.sfCyclesImage
                     win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
-                    win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))
+                    win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase))
                 end
 
                 % If we're quiting break out of stimulus loop too
