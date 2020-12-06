@@ -148,7 +148,7 @@ try
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
-                        win.disableObject(sprintf('%sB%%d',stimStruct.name,cc,ii));
+                        win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,ii));
                     end
                 end
                 
