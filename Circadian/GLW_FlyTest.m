@@ -121,7 +121,7 @@ try
     % Initialize for each stimulus type actually used
     whichStructsUsed = unique(stimCycles);
     for ss = 1:length(whichStructsUsed)
-        fprintf('Initializing stimulus type %d ...',ss);
+        fprintf('Initializing stimulus type %d\n',ss);
         stimStruct = stimStructs{whichStructsUsed(ss)};
         switch stimStruct.type
             case 'drifting'
@@ -142,13 +142,21 @@ try
                 for ii = 1:stimStruct.nPhases
                     for cc = 0:stimStruct.sfCyclesImage
                         barPosition = (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2;
-                        fprintf('Row size: %d, barHeight %d, putting bar %d at offset %d\n',...
+                        fprintf('Row size: %d, barHeight %d, putting black bar %d at offset %d\n',...
                             rowSize,barHeight,cc,barPosition);     
                         win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
-                        win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,ii));
+                        barPosition = (2*(cc-1)+1)*barHeight+phases(ii)-rowSize/2 + barHeight/2;
+                        fprintf('\tRow size: %d, barHeight %d, putting white bar at offset %d\n',...
+                            rowSize,barHeight,barPosition);
+                        win.addRectangle([0 barPosition], ...                                              % Center position
+                            [colSize barHeight], ...                                                       % Width, Height of oval
+                            [stimStruct.contrast stimStruct.contrast stimStruct.contrast], ...       % RGB color
+                            'Name', sprintf('%sW%d%d',stimStruct.name,cc,ii));
+                        win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,ii))
+                        win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))     
                     end
                 end
                 
@@ -189,7 +197,7 @@ try
             otherwise
                 error('Unknown stimulus type specified');
         end
-        fprintf(' done\n');
+        fprintf('Done with that initialize\n');
     end
      
     % Set up key listener
@@ -261,7 +269,9 @@ try
                     if (whichFrame == 1)
                         for cc = 1:stimStruct.sfCyclesImage
                             win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
+                            win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))
                             win.enableObject(sprintf('%sB%d%d',stimStruct.name,cc,whichPhase));
+                            win.enableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))
                         end
                         oldPhase = whichPhase;
                         whichPhase = whichPhase + phaseAdjust;
@@ -309,6 +319,7 @@ try
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
                 for cc = 1:stimStruct.sfCyclesImage
                     win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
+                    win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,ii))
                 end
 
                 % If we're quiting break out of stimulus loop too
