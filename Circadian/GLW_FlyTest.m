@@ -106,6 +106,7 @@ try
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
+    maxCircleSize = min(screenDims)/2;
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     
     % Check that parameters divide things up properly
@@ -146,15 +147,15 @@ try
                 for ii = 1:stimStruct.nPhases
                     for cc = 0:stimStruct.sfCyclesImage
                         barPosition = (2*(cc-1))*barHeight+phases(ii)-rowSize/2 + barHeight/2;
-                        fprintf('Row size: %d, barHeight %d, putting black bar %d at offset %0.1f\n',...
-                            rowSize,barHeight,cc,barPosition);     
+                        % fprintf('Row size: %d, barHeight %d, putting black bar %d at offset %0.1f\n',...
+                        %    rowSize,barHeight,cc,barPosition);     
                         win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
                         barPosition = (2*(cc-1)+1)*barHeight+phases(ii)-rowSize/2 + barHeight/2;
-                        fprintf('\tRow size: %d, barHeight %d, putting white bar at offset %0.1f\n',...
-                            rowSize,barHeight,barPosition);
+                        % fprintf('\tRow size: %d, barHeight %d, putting white bar at offset %0.1f\n',...
+                        %    rowSize,barHeight,barPosition);
                         win.addRectangle([0 barPosition], ...                                              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [stimStruct.contrast stimStruct.contrast stimStruct.contrast], ...       % RGB color
@@ -168,8 +169,20 @@ try
                 % Compute sizes and create circle of each size, equally
                 % space by area.
                 fullSize = rowSize*colSize;
-                minRadius = 1;
-                halfArea = fullSize/4;   minArea = pi*(minRadius/2)^2; maxArea = 2*halfArea;  
+                halfArea = fullSize/4;
+                
+                maxAreaTemp = 2*halfArea; maxSizeTemp = 2*sqrt(maxArea/pi);
+                if (maxSizeTemp > maxCircleSize)
+                    maxArea = pi*(maxCircleSize/2)^2;
+                else
+                    maxArea = maxAreaTemp;
+                end
+                
+                minArea = halfArea-(maxArea-halfArea);
+                if (minArea <= 0)
+                    error('Min area too small, logic error');
+                end
+                
                 if (stimStruct.nSizes == 1)
                     theAreasL = halfArea; theAreasR = halfArea;
                 else

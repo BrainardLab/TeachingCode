@@ -26,5 +26,5 @@ stimShownDurations = stimShownFinishTimes - stimShownStartTimes(1:length(stimSho
 plot(stimShownDurations,'ko','MarkerSize',10,'MarkerFaceColor','k');
 plot(1:length(stimShownFinishTimes),max(stimDurationsSecs)*ones(1,length(stimShownFinishTimes)),'r','LineWidth',1);
 ylim([0 2*max(stimDurationsSecs)]);
-xlabel('Stimlus Cycle');
+xlabel('Stimlus Cycle'); 
 ylabel('Cycle Duration Seconds');
