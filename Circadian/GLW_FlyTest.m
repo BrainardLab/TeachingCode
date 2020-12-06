@@ -25,7 +25,6 @@ try
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
-
     
     % Path to data files
     dataDir = 'data';
@@ -135,16 +134,15 @@ try
                 
                 % Initialize drifting grating
                 phases = linspace(0,360,stimStruct.nPhases);
-
                 for ii = 1:stimStruct.nPhases
                     for cc = 1:stimStruct.sfCyclesImage
-                        win.addRectangle([0 (cc-1)*barHeight], ...                                         % Center position
+                        win.addRectangle([0 (2*(cc-1))*barHeight+phases(ii)-rowSize/2], ...                % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
                             [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
                             'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
-                        win.addRectangle([0 (cc-1)*barHeight], ...                                         % Center position
+                        win.addRectangle([0 (2*(cc-1)+1)*barHeight+phases(ii)-rowSize/2], ...              % Center position
                             [colSize barHeight], ...                                                       % Width, Height of oval
-                            [stimStruct.contrast timStruct.contrast stimStruct.contrast], ...              % RGB color
+                            [stimStruct.contrast stimStruct.contrast stimStruct.contrast], ...             % RGB color
                             'Name', sprintf('%sW%d%d',stimStruct.name,cc,ii));
                     end
                 end
