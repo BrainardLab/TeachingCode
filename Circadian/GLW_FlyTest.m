@@ -141,7 +141,7 @@ try
                 if (stimStruct.nPhases == 1)
                     phases = 0;
                 else
-                    phases = linspace(0,barHeight,stimStruct.nPhases);
+                    phases = linspace(0,2*barHeight,stimStruct.nPhases);
                 end
                 for ii = 1:stimStruct.nPhases
                     for cc = 0:stimStruct.sfCyclesImage
@@ -271,7 +271,7 @@ try
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
-                        for cc = 1:stimStruct.sfCyclesImage
+                        for cc = 0:stimStruct.sfCyclesImage
                             win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
                             win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase))
                             win.enableObject(sprintf('%sB%d%d',stimStruct.name,cc,whichPhase));
@@ -321,7 +321,7 @@ try
                 
                 % Clean
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
-                for cc = 1:stimStruct.sfCyclesImage
+                for cc = 0:stimStruct.sfCyclesImage
                     win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
                     win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase))
                 end
