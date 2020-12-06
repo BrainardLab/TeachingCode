@@ -16,7 +16,7 @@ try
     close all; win = [];
     
     % Cd to directory containing this function
-    [a,b] = fileparts(mfilename('fullpath'));
+    [a] = fileparts(mfilename('fullpath'));
     cd(a);
     
     % Control flow parameters.  Set these to true for regular running.
