@@ -97,7 +97,6 @@ try
     stimDurationsSecs = [10 10 10 10];
     stimRepeats = 3;
     
-    
     % Open the window
     %
     % Choose the last attached screen as our target screen, and figure out its
@@ -132,28 +131,22 @@ try
                     fprintf('Row size %d, cycles/image %d\n',rowSize,stimStruct.sfCyclesImage);
                     error('Two times cycles/image must evenly divide row size');
                 end
+                barHeight = rowSize/(2*stimStruct.sfCyclesImage);
                 
                 % Initialize drifting grating
                 phases = linspace(0,360,stimStruct.nPhases);
+
                 for ii = 1:stimStruct.nPhases
-                    % Make gabor in each phase
-                    gaborrgb{ii} = createGabor(rowSize,colSize,stimStruct.contrast,stimStruct.sfCyclesImage,stimStruct.theta,phases(ii),stimStruct.sigma);
-                    
-                    if (~stimStruct.sine)
-                        gaborrgb{ii}(gaborrgb{ii} > 0.5) = stimStruct.contrast;
-                        gaborrgb{ii}(gaborrgb{ii} < 0.5) = 1-stimStruct.contrast;
+                    for cc = 1:stimStruct.sfCyclesImage
+                        win.addRectangle([0 (cc-1)*barHeight], ...                                         % Center position
+                            [colSize barHeight], ...                                                       % Width, Height of oval
+                            [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
+                            'Name', sprintf('%sB%d%d',stimStruct.name,cc,ii));
+                        win.addRectangle([0 (cc-1)*barHeight], ...                                         % Center position
+                            [colSize barHeight], ...                                                       % Width, Height of oval
+                            [stimStruct.contrast timStruct.contrast stimStruct.contrast], ...              % RGB color
+                            'Name', sprintf('%sW%d%d',stimStruct.name,cc,ii));
                     end
-                    
-                    % Convert to RGB
-                    [calForm1, c1, r1] = ImageToCalFormat(gaborrgb{ii});
-                    RGB = calForm1;
-                    gaborRGB{ii} = CalFormatToImage(RGB,c1,r1);
-                    clear gaborrgb
-                    
-                    % Add the images to the window.
-                    win.addImage([stimStruct.xdist stimStruct.ydist], [colSize rowSize], gaborRGB{ii}, 'Name',sprintf('%s%d',stimStruct.name,ii));
-                    win.disableObject(sprintf('%s%d',stimStruct.name,ii));
-                    clear gaborRGB
                 end
                 
             case 'looming'                            
@@ -262,8 +255,12 @@ try
                 oldPhase = stimStruct.nPhases;
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
-                        win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
-                        win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
+                        for cc = 1:stimStruct.sfCyclesImage
+                            win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
+                            win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase));
+                            win.enableObject(sprintf('%sB%d%d',stimStruct.name,cc,whichPhase));
+                            win.enableObject(sprintf('%sW%d%d',stimStruct.name,cc,whichPhase));
+                        end
                         oldPhase = whichPhase;
                         whichPhase = whichPhase + phaseAdjust;
                         if (whichPhase > stimStruct.nPhases)
@@ -306,7 +303,10 @@ try
                 end
                 
                 % Clean
-                win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
+                for cc = 1:stimStruct.sfCyclesImage
+                    win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
+                    win.disableObject(sprintf('%sW%d%d',stimStruct.name,cc,oldPhase));
+                end
 
                 % If we're quiting break out of stimulus loop too
                 if (quit)
@@ -423,52 +423,70 @@ catch e
     rethrow(e);
 end
 
+%% Old slow code
+% Make gabor in each phase
+% gaborrgb{ii} = createGabor(rowSize,colSize,stimStruct.contrast,stimStruct.sfCyclesImage,stimStruct.theta,phases(ii),stimStruct.sigma);
+% if (~stimStruct.sine)
+%     gaborrgb{ii}(gaborrgb{ii} > 0.5) = stimStruct.contrast;
+%     gaborrgb{ii}(gaborrgb{ii} < 0.5) = 1-stimStruct.contrast;
+% end
+% 
+% % Convert to RGB
+% [calForm1, c1, r1] = ImageToCalFormat(gaborrgb{ii});
+% RGB = calForm1;
+% gaborRGB{ii} = CalFormatToImage(RGB,c1,r1);
+% clear gaborrgb
+% 
+% % Add the images to the window.
+% win.addImage([stimStruct.xdist stimStruct.ydist], [colSize rowSize], gaborRGB{ii}, 'Name',sprintf('%s%d',stimStruct.name,ii));
+% win.disableObject(sprintf('%s%d',stimStruct.name,ii));
+% clear gaborRGB
 
-function theGabor = createGabor(rowSize,colSize,contrast,sf,theta,phase,sigma)
-%
-% Input
-%   meshSize: size of meshgrid (and ultimately size of image).
-%       Must be an even integer
-%   contrast: contrast on a 0-1 scale
-%   sf: spatial frequency in cycles/image
-%          cycles/pixel = sf/meshSize
-%   theta: gabor orientation in degrees, clockwise relative to positive x axis.
-%          theta = 0 means horizontal grating
-%   phase: gabor phase in degrees.
-%          phase = 0 means sin phase at center, 90 means cosine phase at center
-%   sigma: standard deviation of the gaussian filter expressed as fraction of image
-%
-% Output
-%   theGabor: the gabor patch as rgb primary (not gamma corrected) image
-
-
-% Create a mesh on which to compute the gabor
-if rem(rowSize,2) ~= 0 | rem(colSize,2) ~= 0
-    error('row/col sizes must be an even integers');
-end
-res = [colSize rowSize];
-xCenter=res(1)/2;
-yCenter=res(2)/2;
-[gab_x gab_y] = meshgrid(0:(res(1)-1), 0:(res(2)-1));
-
-% Compute the oriented sinusoidal grating
-a=cos(deg2rad(theta));
-b=sin(deg2rad(theta));
-sinWave=sin((2*pi/rowSize)*sf*(b*(gab_x - xCenter) - a*(gab_y - yCenter)) + deg2rad(phase));
-
-% Compute the Gaussian window
-x_factor=-1*(gab_x-xCenter).^2;
-y_factor=-1*(gab_y-yCenter).^2;
-varScale=2*(sigma*rowSize)^2;
-gaussianWindow = exp(x_factor/varScale+y_factor/varScale);
-
-% Compute gabor.  Numbers here run from -1 to 1.
-theGabor=gaussianWindow.*sinWave;
-
-% Convert to contrast
-theGabor = (0.5+0.5*contrast*theGabor);
-
-% Convert single plane to rgb
-theGabor = repmat(theGabor,[1 1 3]);
+% function theGabor = createGabor(rowSize,colSize,contrast,sf,theta,phase,sigma)
+% %
+% % Input
+% %   meshSize: size of meshgrid (and ultimately size of image).
+% %       Must be an even integer
+% %   contrast: contrast on a 0-1 scale
+% %   sf: spatial frequency in cycles/image
+% %          cycles/pixel = sf/meshSize
+% %   theta: gabor orientation in degrees, clockwise relative to positive x axis.
+% %          theta = 0 means horizontal grating
+% %   phase: gabor phase in degrees.
+% %          phase = 0 means sin phase at center, 90 means cosine phase at center
+% %   sigma: standard deviation of the gaussian filter expressed as fraction of image
+% %
+% % Output
+% %   theGabor: the gabor patch as rgb primary (not gamma corrected) image
+% 
+% 
+% % Create a mesh on which to compute the gabor
+% if rem(rowSize,2) ~= 0 | rem(colSize,2) ~= 0
+%     error('row/col sizes must be an even integers');
+% end
+% res = [colSize rowSize];
+% xCenter=res(1)/2;
+% yCenter=res(2)/2;
+% [gab_x gab_y] = meshgrid(0:(res(1)-1), 0:(res(2)-1));
+% 
+% % Compute the oriented sinusoidal grating
+% a=cos(deg2rad(theta));
+% b=sin(deg2rad(theta));
+% sinWave=sin((2*pi/rowSize)*sf*(b*(gab_x - xCenter) - a*(gab_y - yCenter)) + deg2rad(phase));
+% 
+% % Compute the Gaussian window
+% x_factor=-1*(gab_x-xCenter).^2;
+% y_factor=-1*(gab_y-yCenter).^2;
+% varScale=2*(sigma*rowSize)^2;
+% gaussianWindow = exp(x_factor/varScale+y_factor/varScale);
+% 
+% % Compute gabor.  Numbers here run from -1 to 1.
+% theGabor=gaussianWindow.*sinWave;
+% 
+% % Convert to contrast
+% theGabor = (0.5+0.5*contrast*theGabor);
+% 
+% % Convert single plane to rgb
+% theGabor = repmat(theGabor,[1 1 3]);
 
 
