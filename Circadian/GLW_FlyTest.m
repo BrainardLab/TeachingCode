@@ -106,7 +106,7 @@ try
     colSize = screenDims(1);
     halfColSize = colSize/2;
     rowSize = screenDims(2);
-    maxCircleSize = min(screenDims)/2 - 10;
+    maxCircleSize = min([colSize/2 rowSize]) - 5;
     win = GLWindow('SceneDimensions', screenDims,'windowId',length(d),'FullScreen',fullScreen);
     
     % Check that parameters divide things up properly
