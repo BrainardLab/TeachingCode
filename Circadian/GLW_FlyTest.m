@@ -219,7 +219,7 @@ try
                 minContrast = 1-stimStruct.contrast;
                 halfContrast = minContrast + (maxContrast-minContrast)/2;
                 sinVals = halfContrast+sin(2*pi*(0:(stimStruct.nPhases-1))/stimStruct.nPhases)/2;
-                theContrasts = minContrast+sinVals*(maxContrast-minContrast)/2;
+                theContrasts = minContrast+sinVals*(maxContrast-minContrast);
                 
                 % White square
                 win.addRectangle([0 0],[colSize rowSize],[halfContrast^invGamma halfContrast^invGamma halfContrast^invGamma],...
