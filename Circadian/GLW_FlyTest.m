@@ -315,7 +315,7 @@ try
     whichStim = 1;
     nStim = length(stimCycles);
     quit = false;
-    for rr = 1:(stimRepeats*length(stimCycles))
+    for rr = 1:(stimRepeats*nStim)
         % Get current stimulus struct
         stimStruct = stimStructs{stimCycles(whichStim)};
         stimShownList(allStimIndex) = stimCycles(whichStim);
