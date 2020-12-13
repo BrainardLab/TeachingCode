@@ -7,9 +7,12 @@ function GLW_FlyTest
 % Description:
 %     The function makes various changes to stimuli for use in KK's lab to
 %     study fly circadian rhythm.
+%
+%     To update code, type tbUseProject('TeachingCode')'
 
 % 11/29/20 dhb  Started.
 % 12/03/20 dhb  Getting there.
+% 12/13/20 dhb  Back to one circle, add flicker
 
 try
     % Initialize
@@ -200,7 +203,7 @@ try
                 maxContrast = stimStruct.contrast;
                 minContrast = 1-stimStruct.contrast;
                 halfContrast = minContrast + (maxContrast-minContrast)/2;
-                sinVals = halfContrast+sin(2*pi(0:(nPhases-1))/nPhases);
+                sinVals = halfContrast+sin(2*pi*(0:(stimStruct.nPhases-1))/stimStruct.nPhases);
                 theContrasts = minContrast+sinVals*(maxContrast-minContrast)/2;
                 
                 % White square
@@ -404,9 +407,9 @@ try
                 
             case 'flickering'
                 % Temporal params
-                framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nSizes);
+                framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
-                    framesPerSize,frameRate,frameRate/(stimStruct.nSizes*framesPerSize));
+                    framesPerSize,frameRate,frameRate/(stimStruct.nPhases*framesPerSize));
                 
                 % Drift the grating according to the grating's parameters
                 whichPhase = 1;
@@ -420,7 +423,7 @@ try
                         win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
                         
                         oldPhase = whichPhase;
-                        whichPhase = whichPhase + PhaseAdjust;
+                        whichPhase = whichPhase + phaseAdjust;
                         if (whichPhase > stimStruct.nPhases)
                             whichPhase = 1;
                         end
