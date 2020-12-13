@@ -17,6 +17,9 @@ function GLW_FlyTest
 %
 %     Hitting 'q' terminates program gracefully.  
 %     Hitting ' ' advances to next stimulus cycle
+%
+%     After quiting or it finishes, hit the up arrow key to get rid of the
+%     black window.
 
 % 11/29/20 dhb  Started.
 % 12/03/20 dhb  Getting there.
@@ -58,10 +61,10 @@ try
     % Run through these stimulus types (defined below in stimStructs cell
     % array), in this order.  Duration of each stimulus type is specified
     % in seconds.  The whole cycle repeats stimRepeats times (can be set to
-    % Inf for just run until stopped).
+    % a large number for just run until stopped).
     stimCycles = [2 1 4 3 6 5];
     stimDurationsSecs = [10 10 10 10 10 10];
-    stimRepeats = 3;
+    stimRepeats = 100;
     
     % Drifting grating struct
     %   Drifting, stimulus type 1
@@ -83,7 +86,7 @@ try
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{1};
     stimStructs{structIndex+1}.name = 'BackgroundBars';
-    stimStruct{structIndex+1}.nPhases = 1;
+    stimStructs{structIndex+1}.nPhases = 1;
     structIndex = structIndex+2;
     
     % Flickering screen
@@ -99,7 +102,7 @@ try
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{1};
     stimStructs{structIndex+1}.name = 'BackgroundFlciker';
-    stimStruct{structIndex+1}.nPhases = 1;
+    stimStructs{structIndex+1}.nPhases = 1;
     structIndex = structIndex+2;
    
     % Circles
@@ -118,7 +121,7 @@ try
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{1};
     stimStructs{structIndex+1}.name = 'BackgroundCircles';
-    stimStruct{structIndex+1}.nSizes= 1;
+    stimStructs{structIndex+1}.nSizes= 1;
     structIndex = structIndex+2;
      
     % Open the window
