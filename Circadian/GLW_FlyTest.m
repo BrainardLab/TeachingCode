@@ -122,7 +122,7 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 1;
     stimStruct.minDiameter = 3;
-    stimStruct.maxDiameter = 300;
+    stimStruct.maxDiameter = 800;
     stimStruct.minBarPixels = 2;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
@@ -135,7 +135,7 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.minDiameter = 3;
-    stimStruct.maxDiameter = 600;
+    stimStruct.maxDiameter = 800;
     stimStruct.minBarPixels = 2;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
