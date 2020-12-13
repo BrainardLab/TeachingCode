@@ -9,6 +9,14 @@ function GLW_FlyTest
 %     study fly circadian rhythm.
 %
 %     To update code, type tbUseProject('TeachingCode')'
+%
+%     Starts running at specied time if set to wait, otherwise starts as
+%     soon as it's ready to go.  (Initialization can take a little time.)
+%     If you specify waiting, hitting ' ' will override the specified wait
+%     and start.
+%
+%     Hitting 'q' terminates program gracefully.  
+%     Hitting ' ' advances to next stimulus cycle
 
 % 11/29/20 dhb  Started.
 % 12/03/20 dhb  Getting there.
@@ -27,7 +35,6 @@ try
     fullScreen = false;
     regularTiming = true;
     hideCursor = false;
-    waitUntilToStartTime = false;
     
     % Path to data files
     dataDir = 'data';
@@ -41,6 +48,20 @@ try
     
     % Reversal parameter
     probReverse = 0;
+    
+    % Stimulus cycle time info
+    %
+    % If waitUntilStartTime is true, will start at this time of day
+    waitUntilToStartTime = false;
+    startTime = 15:45;
+    
+    % Run through these stimulus types (defined below in stimStructs cell
+    % array), in this order.  Duration of each stimulus type is specified
+    % in seconds.  The whole cycle repeats stimRepeats times (can be set to
+    % Inf for just run until stopped).
+    stimCycles = [1 2 3 4 5 6];
+    stimDurationsSecs = [10 10 10 10 10 10];
+    stimRepeats = 3;
     
     % Static struct
     clear stimStruct
@@ -74,7 +95,7 @@ try
     stimStruct.reverseProb = probReverse;
     stimStructs{2} = stimStruct;
     
-    % Static struct
+    % Flickering static screen at half on.
     clear stimStruct
     stimStruct.type = 'flickering';
     stimStruct.name = 'BackgroundFlicker';
@@ -119,13 +140,7 @@ try
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{6} = stimStruct;
-    
-    % Stimulus cycle time info
-    startTime = 15:45;
-    stimCycles = [1 2 3 4];
-    stimDurationsSecs = [10 10 10 10];
-    stimRepeats = 3;
-    
+      
     % Open the window
     %
     % And use screen info to get parameters.
@@ -203,7 +218,7 @@ try
                 maxContrast = stimStruct.contrast;
                 minContrast = 1-stimStruct.contrast;
                 halfContrast = minContrast + (maxContrast-minContrast)/2;
-                sinVals = halfContrast+sin(2*pi*(0:(stimStruct.nPhases-1))/stimStruct.nPhases);
+                sinVals = halfContrast+sin(2*pi*(0:(stimStruct.nPhases-1))/stimStruct.nPhases)/2;
                 theContrasts = minContrast+sinVals*(maxContrast-minContrast)/2;
                 
                 % White square
