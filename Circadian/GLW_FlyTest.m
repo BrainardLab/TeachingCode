@@ -35,7 +35,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = false;
+    fullScreen = true;
     regularTiming = true;
     hideCursor = false;
     
@@ -84,7 +84,7 @@ try
     stimStruct.ydist = 0;
     stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
-    stimStructs{structIndex+1} = stimStructs{1};
+    stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundBars';
     stimStructs{structIndex+1}.nPhases = 1;
     structIndex = structIndex+2;
@@ -100,7 +100,7 @@ try
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
-    stimStructs{structIndex+1} = stimStructs{1};
+    stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundFlciker';
     stimStructs{structIndex+1}.nPhases = 1;
     structIndex = structIndex+2;
@@ -119,7 +119,7 @@ try
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
-    stimStructs{structIndex+1} = stimStructs{1};
+    stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundCircles';
     stimStructs{structIndex+1}.nSizes= 1;
     structIndex = structIndex+2;
