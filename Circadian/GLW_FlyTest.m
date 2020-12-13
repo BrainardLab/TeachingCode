@@ -75,6 +75,7 @@ try
     stimStruct.nSizes = 1;
     stimStruct.minDiameter = 3;
     stimStruct.maxDiameter = 300;
+    stimStruct.minBarPixels = 2;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{3} = stimStruct;
@@ -86,7 +87,8 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.minDiameter = 3;
-    stimStruct.maxDiameter = 300;
+    stimStruct.maxDiameter = 600;
+    stimStruct.minBarPixels = 2;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{4} = stimStruct;
@@ -175,6 +177,7 @@ try
                 minArea = pi*(stimStruct.minDiameter/2)^2;
                 maxArea = pi*(stimStruct.maxDiameter/2)^2;
                 halfArea = minArea+(maxArea-minArea)/2;
+                screenArea = rowSize*colSize;
                 
                 % Set up sequence
                 if (stimStruct.nSizes == 1)
@@ -183,19 +186,38 @@ try
                     theAreas = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
                 end
                 theSizes = 2*sqrt(theAreas/pi);
+                
+                % Compute bar areas        
+                barAreas = maxArea-theAreas+stimStruct.minBarPixels*rowsize;
 
                 % White background
                 win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
                     'Name', sprintf('%sSquare',stimStruct.name));
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
 
-                % Circles of increasing then decreasing size
+                % Circles of increasing then decreasing size, with bars to
+                % keep areas constant
                 for ii = 1:stimStruct.nSizes
                     win.addOval([0 0], ...                                                              % Center position
                         [theSizes(ii) theSizes(ii)], ...                                                % Width, Height of oval
                         [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...        % RGB color
                         'Name', sprintf('%s%d',stimStruct.name,ii));                                    % Tag associated with this oval.
                     win.disableObject(sprintf('%s%d',stimStruct.name,ii));
+                    
+                    barWidth = barAreas(ii)/(rowSize*2);
+                    barPosition = barWidth/2-colSize/2;
+                    win.addRectangle([barPosition 0], ...                                              % Center position
+                        [barWidth rowSize], ...                                                        % Width, Height of oval
+                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
+                        'Name', sprintf('%sBarL%d%d',stimStruct.name,ii));
+                    win.disableObject(sprintf('%sBarL%d%d',stimStruct.name,ii));
+
+                    barPosition = -barWidth/2+colSize/2;
+                    win.addRectangle([barPosition 0], ...                                              % Center position
+                        [barWidth rowSize], ...                                                        % Width, Height of oval
+                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...       % RGB color
+                        'Name', sprintf('%sBarR%d%d',stimStruct.name,ii));
+                    win.disableObject(sprintf('%sBarR%d%d',stimStruct.name,ii));
                 end
                       
             otherwise
@@ -345,8 +367,13 @@ try
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
                         win.disableObject(sprintf('%s%d',stimStruct.name,oldSize));
+                        win.disableObject(sprintf('%sBarL%d%d',stimStruct.name,oldSize));
+                        win.disableObject(sprintf('%sBarR%d%d',stimStruct.name,oldSize));
+
                         win.enableObject(sprintf('%s%d',stimStruct.name,whichSize));
-                        
+                        win.enableObject(sprintf('%sBarL%d%d',stimStruct.name,whichSize));
+                        win.enableObject(sprintf('%sBarR%d%d',stimStruct.name,whichSize));
+
                         oldSize = whichSize;
                         whichSize = whichSize + sizeAdjust;
                         if (whichSize > stimStruct.nSizes)
@@ -392,7 +419,9 @@ try
                 % Clean
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
                 win.disableObject(sprintf('%s%d',stimStruct.name,oldSize));
-
+                win.disableObject(sprintf('%sBarL%d%d',stimStruct.name,oldSize));
+                win.disableObject(sprintf('%sBarR%d%d',stimStruct.name,oldSize));
+                        
                 % If we're quiting break out of stimulus loop too
                 if (quit)
                     break;
