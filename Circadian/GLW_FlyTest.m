@@ -21,7 +21,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = true;
+    fullScreen = false;
     regularTiming = true;
     hideCursor = false;
     waitUntilToStartTime = false;
@@ -182,7 +182,7 @@ try
                 else
                     theAreas = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
                 end
-                theSizes = 2*sqrt(theAreasL/pi);
+                theSizes = 2*sqrt(theAreas/pi);
 
                 % White background
                 win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
