@@ -8,7 +8,7 @@ function GLW_FlyTest
 %     The function makes various changes to stimuli for use in KK's lab to
 %     study fly circadian rhythm.
 %
-%     To update code, type tbUseProject('TeachingCode')'
+%     To update code, type tbUseProject('TeachingCode')
 %
 %     Starts running at specied time if set to wait, otherwise starts as
 %     soon as it's ready to go.  (Initialization can take a little time.)
@@ -35,9 +35,9 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = true;
-    regularTiming = true;
-    hideCursor = false;
+    fullScreen = true;                      % Set to false to run in a window.
+    regularTiming = true;                   % Runs each stimulus until space hit if false.
+    hideCursor = false;                     % Hide cursor
     
     % Path to data files
     dataDir = '/Users/flydisplay/Desktop/data';
@@ -49,7 +49,8 @@ try
     % linearize.
     invGamma = 0.5;
     
-    % Reversal parameter
+    % Reversal parameter.  Set to non-zero value to have stimuli reverse
+    % sometimes.  Maybe 0.01 or 0.05.
     probReverse = 0;
     
     % Stimulus cycle time info
@@ -77,7 +78,8 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
     stimStruct.contrast = 1;
-    stimStruct.sine = false;
+    
+    % Don't change these
     stimStruct.sigma = Inf;
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
