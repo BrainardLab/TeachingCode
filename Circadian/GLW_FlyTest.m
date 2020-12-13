@@ -67,22 +67,26 @@ try
     stimStruct.reverseProb = probReverse;
     stimStructs{2} = stimStruct;
     
-    % Drifting grating struct
+    % Static circle
     clear stimStruct;
     stimStruct.type = 'looming';
     stimStruct.name = 'BackgroundCircles';
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 1;
+    stimStruct.minDiameter = 3;
+    stimStruct.maxDiameter = 300;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{3} = stimStruct;
     
-    % Drifting grating struct
+    % Circles
     clear stimStruct;
     stimStruct.type = 'looming';
     stimStruct.name = 'Circles';
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
+    stimStruct.minDiameter = 3;
+    stimStruct.maxDiameter = 300;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{4} = stimStruct;
@@ -167,48 +171,31 @@ try
                 
             case 'looming'                            
                 % Compute sizes and create circle of each size, equally
-                % space by area.
-                fullSize = rowSize*colSize;
-                halfArea = fullSize/4;
+                % space by area
+                minArea = pi*(stimStruct.minDiameter/2)^2;
+                maxArea = pi*(stimStruct.maxDiameter/2)^2;
+                halfArea = minArea+(maxArea-minArea)/2;
                 
-                maxAreaTemp = 2*halfArea; maxSizeTemp = 2*sqrt(maxAreaTemp/pi);
-                if (maxSizeTemp > maxCircleSize)
-                    maxArea = pi*(maxCircleSize/2)^2;
-                else
-                    maxArea = maxAreaTemp;
-                end
-                
-                minArea = halfArea-(maxArea-halfArea);
-                if (minArea <= 0)
-                    error('Min area too small, logic error');
-                end
-                
+                % Set up sequence
                 if (stimStruct.nSizes == 1)
-                    theAreasL = halfArea; theAreasR = halfArea;
+                    theAreas = halfArea; 
                 else
-                    theAreasL = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
-                    theAreasR = [linspace(halfArea,minArea,stimStruct.nSizes/4) linspace(minArea,maxArea,stimStruct.nSizes/2) linspace(maxArea,halfArea,stimStruct.nSizes/4)];
+                    theAreas = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
                 end
-                theSizesL = 2*sqrt(theAreasL/pi);
-                theSizesR = 2*sqrt(theAreasR/pi);
+                theSizes = 2*sqrt(theAreasL/pi);
 
-                % White square
+                % White background
                 win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
                     'Name', sprintf('%sSquare',stimStruct.name));
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
 
                 % Circles of increasing then decreasing size
                 for ii = 1:stimStruct.nSizes
-                    win.addOval([-halfColSize/2 0], ...                                                   % Center position
-                        [theSizesL(ii) theSizesL(ii)], ...                                                % Width, Height of oval
-                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sL%d',stimStruct.name,ii));                                     % Tag associated with this oval.
-                    win.disableObject(sprintf('%sL%d',stimStruct.name,ii));
-                    win.addOval([halfColSize/2 0], ...                                                     % Center position
-                        [theSizesR(ii) theSizesR(ii)], ...                                                % Width, Height of oval
-                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...          % RGB color
-                        'Name', sprintf('%sR%d',stimStruct.name,ii));                               % Tag associated with this oval.
-                    win.disableObject(sprintf('%sR%d',stimStruct.name,ii));
+                    win.addOval([0 0], ...                                                              % Center position
+                        [theSizes(ii) theSizes(ii)], ...                                                % Width, Height of oval
+                        [1-stimStruct.contrast 1-stimStruct.contrast 1-stimStruct.contrast], ...        % RGB color
+                        'Name', sprintf('%s%d',stimStruct.name,ii));                                    % Tag associated with this oval.
+                    win.disableObject(sprintf('%s%d',stimStruct.name,ii));
                 end
                       
             otherwise
@@ -250,7 +237,7 @@ try
     whichStim = 1;
     nStim = length(stimCycles);
     quit = false;
-    for rr = 1:(stimRepeats*length(stimCycles));
+    for rr = 1:(stimRepeats*length(stimCycles))
         % Get current stimulus struct
         stimStruct = stimStructs{stimCycles(whichStim)};
         stimShownList(allStimIndex) = stimCycles(whichStim);
@@ -268,8 +255,7 @@ try
         else
             finishSecs = startSecs + stimDurationsSecs(whichStim);
         end
-        switch stimStruct.type
-            
+        switch stimStruct.type    
             case 'drifting'
                 % Temporal params
                 framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
@@ -358,10 +344,8 @@ try
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
-                        win.disableObject(sprintf('%sL%d',stimStruct.name,oldSize));
-                        win.disableObject(sprintf('%sR%d',stimStruct.name,oldSize));
-                        win.enableObject(sprintf('%sL%d',stimStruct.name,whichSize));
-                        win.enableObject(sprintf('%sR%d',stimStruct.name,whichSize));
+                        win.disableObject(sprintf('%s%d',stimStruct.name,oldSize));
+                        win.enableObject(sprintf('%s%d',stimStruct.name,whichSize));
                         
                         oldSize = whichSize;
                         whichSize = whichSize + sizeAdjust;
@@ -407,8 +391,7 @@ try
                 
                 % Clean
                 win.disableObject(sprintf('%sSquare',stimStruct.name));
-                win.disableObject(sprintf('%sL%d',stimStruct.name,oldSize));
-                win.disableObject(sprintf('%sR%d',stimStruct.name,oldSize));
+                win.disableObject(sprintf('%s%d',stimStruct.name,oldSize));
 
                 % If we're quiting break out of stimulus loop too
                 if (quit)
