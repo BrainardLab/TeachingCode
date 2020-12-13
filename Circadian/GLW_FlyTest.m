@@ -37,8 +37,8 @@ try
     hideCursor = false;
     
     % Path to data files
-    dataDir = 'data';
-    
+    dataDir = '/Users/flydisplay/Desktop/data';
+        
     % Set bg RGB.  This may get covered up in the end and have no effect.
     bgRGB = [1 1 1];
     
@@ -59,27 +59,14 @@ try
     % array), in this order.  Duration of each stimulus type is specified
     % in seconds.  The whole cycle repeats stimRepeats times (can be set to
     % Inf for just run until stopped).
-    stimCycles = [1 2 3 4 5 6];
+    stimCycles = [2 1 4 3 6 5];
     stimDurationsSecs = [10 10 10 10 10 10];
     stimRepeats = 3;
     
-    % Static struct
-    clear stimStruct
-    stimStruct.type = 'drifting';
-    stimStruct.name = 'BackgroundBars';
-    stimStruct.sfCyclesImage = 2;
-    stimStruct.tfHz = 0.25;
-    stimStruct.nPhases = 1;
-    stimStruct.contrast = 1;
-    stimStruct.sine = false;
-    stimStruct.sigma = Inf;
-    stimStruct.theta = 0;
-    stimStruct.xdist = 0;
-    stimStruct.ydist = 0;
-    stimStruct.reverseProb = probReverse;
-    stimStructs{1} = stimStruct;
-    
     % Drifting grating struct
+    %   Drifting, stimulus type 1
+    %   Static version, stimulus type 2
+    structIndex = 1;
     clear stimStruct;
     stimStruct.type = 'drifting';
     stimStruct.name = 'Bars';
@@ -93,42 +80,31 @@ try
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
     stimStruct.reverseProb = probReverse;
-    stimStructs{2} = stimStruct;
+    stimStructs{structIndex} = stimStruct;
+    stimStructs{structIndex+1} = stimStructs{1};
+    stimStructs{structIndex+1}.name = 'BackgroundBars';
+    stimStruct{structIndex+1}.nPhases = 1;
+    structIndex = structIndex+2;
     
-    % Flickering static screen at half on.
+    % Flickering screen
+    %   Flickering, stimulus type 3
+    %   Static version, stimulus type 4
     clear stimStruct
-    stimStruct.type = 'flickering';
-    stimStruct.name = 'BackgroundFlicker';
-    stimStruct.tfHz = 0.25;
-    stimStruct.nPhases = 1;
-    stimStruct.contrast = 1;
-    stimStruct.reverseProb = probReverse;
-    stimStructs{3} = stimStruct;
-    
-    % Drifting grating struct
-    clear stimStruct;
     stimStruct.type = 'flickering';
     stimStruct.name = 'Flicker';
     stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
-    stimStructs{4} = stimStruct;
-    
-    % Static circle
-    clear stimStruct;
-    stimStruct.type = 'looming';
-    stimStruct.name = 'BackgroundCircles';
-    stimStruct.tfHz = 0.25;
-    stimStruct.nSizes = 1;
-    stimStruct.minDiameter = 3;
-    stimStruct.maxDiameter = 800;
-    stimStruct.minBarPixels = 2;
-    stimStruct.contrast = 1;
-    stimStruct.reverseProb = probReverse;
-    stimStructs{5} = stimStruct;
-    
+    stimStructs{structIndex} = stimStruct;
+    stimStructs{structIndex+1} = stimStructs{1};
+    stimStructs{structIndex+1}.name = 'BackgroundFlciker';
+    stimStruct{structIndex+1}.nPhases = 1;
+    structIndex = structIndex+2;
+   
     % Circles
+    %   Looming, stimulus type 5
+    %   Static version, stimulus type 6
     clear stimStruct;
     stimStruct.type = 'looming';
     stimStruct.name = 'Circles';
@@ -136,11 +112,15 @@ try
     stimStruct.nSizes = 240;
     stimStruct.minDiameter = 3;
     stimStruct.maxDiameter = 800;
-    stimStruct.minBarPixels = 2;
+    stimStruct.minBarPixels = 4;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
-    stimStructs{6} = stimStruct;
-      
+    stimStructs{structIndex} = stimStruct;
+    stimStructs{structIndex+1} = stimStructs{1};
+    stimStructs{structIndex+1}.name = 'BackgroundCircles';
+    stimStruct{structIndex+1}.nSizes= 1;
+    structIndex = structIndex+2;
+     
     % Open the window
     %
     % And use screen info to get parameters.
@@ -174,6 +154,8 @@ try
         stimStruct = stimStructs{whichStructsUsed(ss)};
         switch stimStruct.type
             case 'drifting'
+                % Create the drifting grating stimulus type
+                %
                 % Check number of cycles relative to row size
                 if (rem(rowSize,2*stimStruct.sfCyclesImage) ~= 0)
                     fprintf('Row size %d, cycles/image %d\n',rowSize,stimStruct.sfCyclesImage);
@@ -214,6 +196,8 @@ try
                 end
                 
             case 'flickering'
+                % Create the flickering screen stimulus type
+                %
                 % Contrasts
                 maxContrast = stimStruct.contrast;
                 minContrast = 1-stimStruct.contrast;
@@ -234,12 +218,13 @@ try
                 end
                 
             case 'looming'
+                % Create the looming circle stimulus type
+                %
                 % Compute sizes and create circle of each size, equally
                 % space by area
                 minArea = pi*(stimStruct.minDiameter/2)^2;
                 maxArea = pi*(stimStruct.maxDiameter/2)^2;
                 halfArea = minArea+(maxArea-minArea)/2;
-                screenArea = rowSize*colSize;
                 
                 % Set up sequence
                 if (stimStruct.nSizes == 1)
@@ -347,6 +332,8 @@ try
         end
         switch stimStruct.type
             case 'drifting'
+                % Run the drifting grating stimulus
+                %
                 % Temporal params
                 framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 fprintf('Running at %d frames per phase, frame rate %d Hz, %0.2f cycles/sec\n', ...
@@ -421,6 +408,8 @@ try
                 end
                 
             case 'flickering'
+                % Run the flickering screen stimulus.
+                
                 % Temporal params
                 framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
                 fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
@@ -489,6 +478,8 @@ try
                 end
                 
             case 'looming'
+                % Run the looming circle stimulus
+                %
                 % Temporal params
                 framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nSizes);
                 fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
@@ -590,8 +581,8 @@ try
     mglDisplayCursor(1);
     
     % Save data
-    % filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
-    filename = fullfile(dataDir,['theData_Temp']);
+    filename = fullfile(dataDir,['theData_' datestr(now,'yyyy-mm-dd') '_' datestr(now,'HH:MM:SS')]);
+    %filename = fullfile(dataDir,['theData_Temp']);
     save(filename);
     
     % Error handler
