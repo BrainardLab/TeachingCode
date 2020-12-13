@@ -188,7 +188,7 @@ try
                 theSizes = 2*sqrt(theAreas/pi);
                 
                 % Compute bar areas        
-                barAreas = maxArea-theAreas+stimStruct.minBarPixels*rowsize;
+                barAreas = maxArea-theAreas+stimStruct.minBarPixels*rowSize;
 
                 % White background
                 win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast stimStruct.contrast stimStruct.contrast],...
