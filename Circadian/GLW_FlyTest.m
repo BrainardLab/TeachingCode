@@ -56,7 +56,7 @@ try
     % Stimulus cycle time info
     %
     % If waitUntilStartTime is true, will start at this time of day
-    waitUntilToStartTime = true;
+    waitUntilToStartTime = false;
     startTime = '2020-12-13_20:10';
     
     % Run through these stimulus types (defined below in stimStructs cell
