@@ -57,14 +57,14 @@ try
     %
     % If waitUntilStartTime is true, will start at this time of day
     waitUntilToStartTime = false;
-    startTime = 15:45;
+    startTime = '2020-12-13_19:51';
     
     % Run through these stimulus types (defined below in stimStructs cell
     % array), in this order.  Duration of each stimulus type is specified
     % in seconds.  The whole cycle repeats stimRepeats times (can be set to
     % a large number for just run until stopped).
     stimCycles = [2 1 4 3 6 5];
-    stimDurationsSecs = [10 10 10 10 10 10];
+    stimDurationsMinutes = [10/60 10/60 10/60 10/60 10/60 10/60];
     stimRepeats = 100;
     
     % Drifting grating struct
@@ -232,16 +232,19 @@ try
                 halfArea = minArea+(maxArea-minArea)/2;
                 
                 % Set up sequence
-                if (stimStruct.nSizes == 1)
-                    theAreas = halfArea;
-                else
-                    theAreas = [linspace(halfArea,maxArea,stimStruct.nSizes/4) linspace(maxArea,minArea,stimStruct.nSizes/2) linspace(minArea,halfArea,stimStruct.nSizes/4)];
-                end
+                sinVals = 0.5+sin(2*pi*(0:(stimStruct.nSizes-1))/stimStruct.nSizes)/2;
+                theAreas = minArea + sinVals*(maxArea-minArea);
                 theSizes = 2*sqrt(theAreas/pi);
                 
                 % Compute bar areas.  The left and right black bars should come to this much area,
                 % so as to leave constant black on the screen.
-                barAreas = maxArea-theAreas+stimStruct.minBarPixels*rowSize;
+                barAreas = maxArea-theAreas+
+                
+                % How much of the screen is black
+                blackArea = maxArea + stimStruct.minBarPixels*rowSize;
+                totalArea = rowSize*colSize;
+                blackFraction = blackArea/totalArea;
+                fprintf('Fraction of area that is black: %0.2f\n',blackFraction);
                 
                 % White background
                 win.addRectangle([0 0],[colSize rowSize],[stimStruct.contrast^invGamma stimStruct.contrast^invGamma stimStruct.contrast^invGamma],...
@@ -260,6 +263,12 @@ try
                     % Compute width of left and right black bars so that
                     % their total area is the desired bar area.
                     barWidth = barAreas(ii)/(rowSize*2);
+                    
+                    % Total black area
+                    blackAreaCheck = pi*(theSizes(ii)/2)^2 + 2*barWidth*rowSize;
+                    if (abs(blackAreaCheck-blackArea) > 1e-4)
+                        error('Failure of constant black area stipulation');
+                    end
                     
                     % Put bar at left edge of screen
                     barPosition = barWidth/2-colSize/2;
@@ -296,7 +305,7 @@ try
     % Wait until start time
     if (waitUntilToStartTime)
         fprintf('Waiting until specified start time of day, hit space to override ...');
-        while (datenum(datestr(now,'HH:MM'),'HH:MM')-datenum(startTime,'HH:MM') < 0)
+        while (datenum(datestr(now,'yyyy-mm-dd_HH:MM'),'yyyy-mm-dd_HH:MM')-datenum(startTime,'yyyy-mm-dd_HH:MM') < 0)
             % Check whether key was hit, start if ' '
             key = 'z';
             if (CharAvail)
@@ -310,7 +319,8 @@ try
         end
         fprintf(' done\n');
     end
-    fprintf('Starting stimulus cycling\n');
+    theStartTime = datestr(now,'yyyy-mm-dd_HH:MM');
+    fprintf('Starting stimulus cycling at %s\n',theStartTime);
     
     % Cycle through stimulus types until number of repetions reached or someone hits q
     allStimIndex = 1;
@@ -323,6 +333,7 @@ try
         stimShownList(allStimIndex) = stimCycles(whichStim);
         
         % Set up drawtimes
+        stimDurationsSecs = stimDurationMinutes*60;
         whichDraw = 1;
         maxDraws = round(frameRate*(stimDurationsSecs(whichStim)+1));
         drawTimes{allStimIndex} = NaN*ones(1,maxDraws);
