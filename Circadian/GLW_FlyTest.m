@@ -35,7 +35,7 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = true;                      % Set to false to run in a window.
+    fullScreen = false;                      % Set to false to run in a window.
     regularTiming = true;                   % Runs each stimulus until space hit if false.
     hideCursor = false;                     % Hide cursor
     
@@ -56,15 +56,15 @@ try
     % Stimulus cycle time info
     %
     % If waitUntilStartTime is true, will start at this time of day
-    waitUntilToStartTime = false;
-    startTime = '2020-12-13_19:51';
+    waitUntilToStartTime = true;
+    startTime = '2020-12-13_20:10';
     
     % Run through these stimulus types (defined below in stimStructs cell
     % array), in this order.  Duration of each stimulus type is specified
     % in seconds.  The whole cycle repeats stimRepeats times (can be set to
     % a large number for just run until stopped).
     stimCycles = [2 1 4 3 6 5];
-    stimDurationsMinutes = [10/60 10/60 10/60 10/60 10/60 10/60];
+    stimDurationMinutes = [10/60 10/60 10/60 10/60 10/60 10/60];
     stimRepeats = 100;
     
     % Drifting grating struct
@@ -116,8 +116,8 @@ try
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.minDiameter = 3;
-    stimStruct.maxDiameter = 800;
-    stimStruct.minBarPixels = 4;
+    stimStruct.maxDiameter = 900;
+    stimStruct.minBarPixels = 20;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
@@ -238,7 +238,7 @@ try
                 
                 % Compute bar areas.  The left and right black bars should come to this much area,
                 % so as to leave constant black on the screen.
-                barAreas = maxArea-theAreas+
+                barAreas = maxArea-theAreas+stimStruct.minBarPixels*rowSize;
                 
                 % How much of the screen is black
                 blackArea = maxArea + stimStruct.minBarPixels*rowSize;
