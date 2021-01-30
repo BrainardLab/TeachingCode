@@ -77,7 +77,6 @@ try
     stimStruct.sfCyclesImage = 2;
     stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
-    stimStruct.startingPhase = 1;
     stimStruct.contrast = 1;
     
     % Don't change these
@@ -100,7 +99,6 @@ try
     stimStruct.name = 'Flicker';
     stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
-    stimStruct.startingPhase = 1;
     stimStruct.contrast = 1;
     stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
@@ -117,7 +115,6 @@ try
     stimStruct.name = 'Circles';
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
-    stimStruct.startingSize = 121;
     stimStruct.minDiameter = 3;
     stimStruct.maxDiameter = 900;
     stimStruct.minBarPixels = 20;
@@ -359,7 +356,7 @@ try
                     framesPerPhase,frameRate,frameRate/(stimStruct.nPhases*framesPerPhase));
                 
                 % Drift the grating according to the grating's parameters
-                whichPhase = stimStruct.startingPhase;
+                whichPhase = 1;
                 whichFrame = 1;
                 phaseAdjust = 1;
                 oldPhase = stimStruct.nPhases;
@@ -435,7 +432,7 @@ try
                     framesPerSize,frameRate,frameRate/(stimStruct.nPhases*framesPerSize));
                 
                 % Drift the grating according to the grating's parameters
-                whichPhase = stimStruct.startingPhase;
+                whichPhase = 1;
                 whichFrame = 1;
                 oldPhase = stimStruct.nPhases;
                 phaseAdjust = 1;
@@ -505,7 +502,7 @@ try
                     framesPerSize,frameRate,frameRate/(stimStruct.nSizes*framesPerSize));
                 
                 % Drift the grating according to the grating's parameters
-                whichSize = stimStruct.startingSize;
+                whichSize = 1;
                 whichFrame = 1;
                 oldSize = stimStruct.nSizes;
                 sizeAdjust = 1;
