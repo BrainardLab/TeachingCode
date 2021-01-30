@@ -119,7 +119,7 @@ try
     stimStruct.name = 'Circles';
     stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
-    stimStruct.startingSize = 121;
+    stimStruct.startingSize = 1;
     stimStruct.minDiameter = 3;
     stimStruct.maxDiameter = 900;
     stimStruct.minBarPixels = 20;
@@ -238,7 +238,7 @@ try
                 halfArea = minArea+(maxArea-minArea)/2;
                 
                 % Set up sequence
-                sinVals = 0.5+sin(2*pi*(0:(stimStruct.nSizes-1))/stimStruct.nSizes)/2;
+                sinVals = 0.5-cos(2*pi*(0:(stimStruct.nSizes-1))/stimStruct.nSizes)/2;
                 theAreas = minArea + sinVals*(maxArea-minArea);
                 theSizes = 2*sqrt(theAreas/pi);
                 
