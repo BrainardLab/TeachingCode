@@ -90,6 +90,7 @@ try
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundBars';
     stimStructs{structIndex+1}.nPhases = 1;
+    stimStructs{structIndex+1}.startingPhase = 1;
     structIndex = structIndex+2;
     
     % Flickering screen
@@ -107,6 +108,7 @@ try
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundFlciker';
     stimStructs{structIndex+1}.nPhases = 1;
+    stimStructs{structIndex+1}.startingPhase = 1;
     structIndex = structIndex+2;
    
     % Circles
@@ -127,6 +129,7 @@ try
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundCircles';
     stimStructs{structIndex+1}.nSizes= 1;
+    stimStructs{structIndex+1}.startingSize = 1;
     structIndex = structIndex+2;
      
     % Open the window
