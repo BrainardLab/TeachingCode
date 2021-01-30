@@ -40,7 +40,7 @@ try
     hideCursor = false;                     % Hide cursor
     
     % Path to data files
-    dataDir = '/Users/flydisplay/Desktop/data';
+    dataDir = '~/Desktop/data';
         
     % Set bg RGB.  This may get covered up in the end and have no effect.
     bgRGB = [1 1 1];
@@ -48,10 +48,6 @@ try
     % Gamma correction exponent. Raise contrat to this to approximately
     % linearize.
     invGamma = 0.5;
-    
-    % Reversal parameter.  Set to non-zero value to have stimuli reverse
-    % sometimes.  Maybe 0.01 or 0.05.
-    probReverse = 0;
     
     % Stimulus cycle time info
     %
@@ -63,8 +59,27 @@ try
     % array), in this order.  Duration of each stimulus type is specified
     % in seconds.  The whole cycle repeats stimRepeats times (can be set to
     % a large number for just run until stopped).
-    stimCycles = [2 1 4 3 6 5];
-    stimDurationMinutes = [10/60 10/60 10/60 10/60 10/60 10/60];
+    stimCycles = [2 1 1 1 4 3 6 5];
+    stimDurationMinutes = [10/60 10/60 10/60 10/60 10/60 10/60 10/60 10/60];
+    stimDirections = [1 1 1 -1 1 1 1 1];
+    stimTfHzs = [0.25 0.25 0.5 0.5 0.25 0.25 0.25 0.25];
+    stimReverseProbs = [0 0 0 0 0 0 0 0];
+    
+    % Checks
+    if (length(stimDurationMinutes) ~= length(stimCycles))
+        error('Wrong number of durations specified');
+    end
+    if (length(stimDirections) ~= length(stimCycles))
+        error('Wrong number of directions specified');
+    end
+    if (length(stimTfHzs) ~= length(stimCycles))
+        error('Wrong number of temporal frequencies specified');
+    end
+    if (length(stimReversePros) ~= length(stimCycles))
+        error('Wrong number of reversal probabilities specified');
+    end        
+   
+    stimDurationsSecs = stimDurationMinutes*60;
     stimRepeats = 100;
     
     % Drifting grating struct
@@ -75,7 +90,6 @@ try
     stimStruct.type = 'drifting';
     stimStruct.name = 'Bars';
     stimStruct.sfCyclesImage = 2;
-    stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
     stimStruct.startingPhase = 1;
     stimStruct.contrast = 1;
@@ -85,7 +99,6 @@ try
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
-    stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundBars';
@@ -99,11 +112,9 @@ try
     clear stimStruct
     stimStruct.type = 'flickering';
     stimStruct.name = 'Flicker';
-    stimStruct.tfHz = 0.25;
     stimStruct.nPhases = 120;
     stimStruct.startingPhase = 1;
     stimStruct.contrast = 1;
-    stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundFlciker';
@@ -117,14 +128,12 @@ try
     clear stimStruct;
     stimStruct.type = 'looming';
     stimStruct.name = 'Circles';
-    stimStruct.tfHz = 0.25;
     stimStruct.nSizes = 240;
     stimStruct.startingSize = 1;
     stimStruct.minDiameter = 3;
     stimStruct.maxDiameter = 900;
     stimStruct.minBarPixels = 20;
     stimStruct.contrast = 1;
-    stimStruct.reverseProb = probReverse;
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundCircles';
@@ -337,9 +346,11 @@ try
         % Get current stimulus struct
         stimStruct = stimStructs{stimCycles(whichStim)};
         stimShownList(allStimIndex) = stimCycles(whichStim);
+        tfHz = stimTfHzs(whichStim);
+        direction = stimDirections(whichStim);
+        reverseProb = stimReverseProbs(whichStim);
         
         % Set up drawtimes
-        stimDurationsSecs = stimDurationMinutes*60;
         whichDraw = 1;
         maxDraws = round(frameRate*(stimDurationsSecs(whichStim)+1));
         drawTimes{allStimIndex} = NaN*ones(1,maxDraws);
@@ -357,14 +368,14 @@ try
                 % Run the drifting grating stimulus
                 %
                 % Temporal params
-                framesPerPhase = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
+                framesPerPhase = round((frameRate/tfHz)/stimStruct.nPhases);
                 fprintf('Running at %d frames per phase, frame rate %d Hz, %0.2f cycles/sec\n', ...
                     framesPerPhase,frameRate,frameRate/(stimStruct.nPhases*framesPerPhase));
                 
                 % Drift the grating according to the grating's parameters
                 whichPhase = stimStruct.startingPhase;
                 whichFrame = 1;
-                phaseAdjust = 1;
+                phaseAdjust = direction;
                 oldPhase = stimStruct.nPhases;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
@@ -383,7 +394,7 @@ try
                         if (whichPhase < 1)
                             whichPhase = stimStruct.nPhases;
                         end
-                        if (CoinFlip(1,stimStruct.reverseProb))
+                        if (CoinFlip(1,reverseProb))
                             if (phaseAdjust == 1)
                                 phaseAdjust = -1;
                             else
@@ -433,7 +444,7 @@ try
                 % Run the flickering screen stimulus.
                 
                 % Temporal params
-                framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nPhases);
+                framesPerSize = round((frameRate/tfHz)/stimStruct.nPhases);
                 fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
                     framesPerSize,frameRate,frameRate/(stimStruct.nPhases*framesPerSize));
                 
@@ -441,7 +452,7 @@ try
                 whichPhase = stimStruct.startingPhase;
                 whichFrame = 1;
                 oldPhase = stimStruct.nPhases;
-                phaseAdjust = 1;
+                phaseAdjust = direction;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
@@ -456,7 +467,7 @@ try
                         if (whichPhase < 1)
                             whichPhase = stimStruct.nPhases;
                         end
-                        if (CoinFlip(1,stimStruct.reverseProb))
+                        if (CoinFlip(1,reverseProb))
                             if (phaseAdjust == 1)
                                 phaseAdjust = -1;
                             else
@@ -503,7 +514,7 @@ try
                 % Run the looming circle stimulus
                 %
                 % Temporal params
-                framesPerSize = round((frameRate/stimStruct.tfHz)/stimStruct.nSizes);
+                framesPerSize = round((frameRate/tfHz)/stimStruct.nSizes);
                 fprintf('Running at %d frames per size, frame rate %d Hz, %0.2f cycles/sec\n', ...
                     framesPerSize,frameRate,frameRate/(stimStruct.nSizes*framesPerSize));
                 
@@ -511,7 +522,7 @@ try
                 whichSize = stimStruct.startingSize;
                 whichFrame = 1;
                 oldSize = stimStruct.nSizes;
-                sizeAdjust = 1;
+                sizeAdjust = direction;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
                     if (whichFrame == 1)
@@ -531,7 +542,7 @@ try
                         if (whichSize < 1)
                             whichSize = stimStruct.nSizes;
                         end
-                        if (CoinFlip(1,stimStruct.reverseProb))
+                        if (CoinFlip(1,reverseProb))
                             if (sizeAdjust == 1)
                                 sizeAdjust = -1;
                             else
