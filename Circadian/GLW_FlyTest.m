@@ -64,6 +64,7 @@ try
     stimDirections = [1 1 1 -1 1 1 1 1];
     stimTfHzs = [0.25 0.25 0.5 0.5 0.25 0.25 0.25 0.25];
     stimReverseProbs = [0 0 0 0 0 0 0 0];
+    stimPauseSecs = [0 0 0 0 0 0 0 0];
     
     % Checks
     if (length(stimDurationMinutes) ~= length(stimCycles))
@@ -75,9 +76,12 @@ try
     if (length(stimTfHzs) ~= length(stimCycles))
         error('Wrong number of temporal frequencies specified');
     end
-    if (length(stimReversePros) ~= length(stimCycles))
+    if (length(stimReverseProbs) ~= length(stimCycles))
         error('Wrong number of reversal probabilities specified');
-    end        
+    end 
+    if (length(stimPauseSecs) ~= length(stimCycles))
+        error('Wrong number of pauses specified');
+    end 
    
     stimDurationsSecs = stimDurationMinutes*60;
     stimRepeats = 100;
