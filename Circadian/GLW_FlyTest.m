@@ -15,7 +15,7 @@ function GLW_FlyTest
 %     If you specify waiting, hitting ' ' will override the specified wait
 %     and start.
 %
-%     Hitting 'q' terminates program gracefully.  
+%     Hitting 'q' terminates program gracefully.
 %     Hitting ' ' advances to next stimulus cycle
 %
 %     After quiting or it finishes, hit the up arrow key to get rid of the
@@ -35,13 +35,13 @@ try
     
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
-    fullScreen = false;                      % Set to false to run in a window.
-    regularTiming = true;                   % Runs each stimulus until space hit if false.
+    fullScreen = false;                     % Set to false to run in a window.
+    regularTiming = false;                   % Runs each stimulus until space hit if false.
     hideCursor = false;                     % Hide cursor
     
     % Path to data files
     dataDir = '~/Desktop/data';
-        
+    
     % Set bg RGB.  This may get covered up in the end and have no effect.
     bgRGB = [1 1 1];
     
@@ -64,7 +64,7 @@ try
     stimDirections = [1 1 1 -1 1 1 1 1];
     stimTfHzs = [0.25 0.25 0.5 0.5 0.25 0.25 0.25 0.25];
     stimReverseProbs = [0 0 0 0 0 0 0 0];
-    stimPauseSecs = [0 0 0 0 0 0 0 0];
+    stimPauseSecs = [0 1 0 0 0 0 0 0];
     
     % Checks
     if (length(stimDurationMinutes) ~= length(stimCycles))
@@ -78,11 +78,11 @@ try
     end
     if (length(stimReverseProbs) ~= length(stimCycles))
         error('Wrong number of reversal probabilities specified');
-    end 
+    end
     if (length(stimPauseSecs) ~= length(stimCycles))
         error('Wrong number of pauses specified');
-    end 
-   
+    end
+    
     stimDurationsSecs = stimDurationMinutes*60;
     stimRepeats = 100;
     
@@ -125,7 +125,7 @@ try
     stimStructs{structIndex+1}.nPhases = 1;
     stimStructs{structIndex+1}.startingPhase = 1;
     structIndex = structIndex+2;
-   
+    
     % Circles
     %   Looming, stimulus type 5
     %   Static version, stimulus type 6
@@ -144,7 +144,7 @@ try
     stimStructs{structIndex+1}.nSizes= 1;
     stimStructs{structIndex+1}.startingSize = 1;
     structIndex = structIndex+2;
-     
+    
     % Open the window
     %
     % And use screen info to get parameters.
@@ -353,6 +353,7 @@ try
         tfHz = stimTfHzs(whichStim);
         direction = stimDirections(whichStim);
         reverseProb = stimReverseProbs(whichStim);
+        pauseSec = stimPauseSecs(whichStim);
         
         % Set up drawtimes
         whichDraw = 1;
@@ -380,9 +381,17 @@ try
                 whichPhase = stimStruct.startingPhase;
                 whichFrame = 1;
                 phaseAdjust = direction;
+                firstTime = true;
                 oldPhase = stimStruct.nPhases;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
+                    if (whichPhase == 1)
+                        if (~firstTime)
+                            WaitSecs(pauseSec);
+                        end
+                        firstTime = false;
+                    end
+                    
                     if (whichFrame == 1)
                         for cc = 0:stimStruct.sfCyclesImage
                             win.disableObject(sprintf('%sB%d%d',stimStruct.name,cc,oldPhase));
@@ -455,11 +464,19 @@ try
                 % Drift the grating according to the grating's parameters
                 whichPhase = stimStruct.startingPhase;
                 whichFrame = 1;
+                firstTime = true;
                 oldPhase = stimStruct.nPhases;
                 phaseAdjust = direction;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
-                    if (whichFrame == 1)
+                    if (whichPhase == 1)
+                        if (~firstTime)
+                            WaitSecs(pauseSec);
+                        end
+                        firstTime = false;
+                    end
+                    
+                    if (whichFrame == 1) 
                         win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
                         win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
                         
@@ -525,11 +542,19 @@ try
                 % Drift the grating according to the grating's parameters
                 whichSize = stimStruct.startingSize;
                 whichFrame = 1;
+                firstTime = true;
                 oldSize = stimStruct.nSizes;
                 sizeAdjust = direction;
                 win.enableObject(sprintf('%sSquare',stimStruct.name));
                 while (GetSecs < finishSecs)
-                    if (whichFrame == 1)
+                    if (whichSize == 1)
+                        if (~firstTime)
+                            WaitSecs(pauseSec);
+                        end
+                        firstTime = false;
+                    end
+                    
+                    if (whichFrame == 1)                       
                         win.disableObject(sprintf('%s%d',stimStruct.name,oldSize));
                         win.disableObject(sprintf('%sBarL%d',stimStruct.name,oldSize));
                         win.disableObject(sprintf('%sBarR%d',stimStruct.name,oldSize));
