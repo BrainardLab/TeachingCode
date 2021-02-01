@@ -1,8 +1,8 @@
-function GLW_FlyTest
-% GLW_FlyTest  Demonstrates how to drift a grating in GLWindow.
+function GLW_FlyTestNew
+% GLW_FlyTestNew
 %
 % Syntax:
-%     GLW_FlyTest
+%     GLW_FlyTestNew
 %
 % Description:
 %     The function makes various changes to stimuli for use in KK's lab to
@@ -24,6 +24,7 @@ function GLW_FlyTest
 % 11/29/20 dhb  Started.
 % 12/03/20 dhb  Getting there.
 % 12/13/20 dhb  Back to one circle, add flicker
+% 02/01/21 dhb  Add comments to this new version
 
 try
     % Initialize
@@ -36,7 +37,10 @@ try
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
     fullScreen = false;                     % Set to false to run in a window.
-    regularTiming = false;                   % Runs each stimulus until space hit if false.
+    regularTiming = true;                   % Runs each stimulus until space hit if false.
+    
+    % Hide cursor during experiment? It's cleaner if you hide it, but then
+    % things get a bit messed up at the end of the run.
     hideCursor = false;                     % Hide cursor
     
     % Path to data files
@@ -56,17 +60,31 @@ try
     startTime = '2020-12-13_20:10';
     
     % Run through these stimulus types (defined below in stimStructs cell
-    % array), in this order.  Duration of each stimulus type is specified
-    % in seconds.  The whole cycle repeats stimRepeats times (can be set to
-    % a large number for just run until stopped).
+    % array), in this order.  Each array defines what happens during one
+    % phase of the presentation.  They must all be the same length.
+    %   stimCycles - index of basic stimulus type definitions below.
+    %   stimDurationMinutes - Duration of each stimulus cycle, in minutes.
+    %   stimTfHzs - Temporal frequency of each cycle in hz.
+    %   stimDirections - Number 1 or -1 determines which way the stimulus
+    %      moves (e.g., up versus down for grating).  For gratings, 1 is up
+    %      and -1 is down.
+    %   stimReversProbs - Probability that a reversal happens.  Try numbers
+    %      like 0.01 and 0.05 if you want some reversals, look, and go from
+    %      there.
+    %   stimPausSecs - Stimulus will pause this long after each run through
+    %      all of its positions.
+    %   stimRepeats - Just a number, not a vector. The whole 
+    %      set of stimuli specfied by the vectors here repeats stimRepeats times
+    %      (can be set to a large number for just run until stopped).
     stimCycles = [2 1 1 1 4 3 6 5];
     stimDurationMinutes = [10/60 10/60 10/60 10/60 10/60 10/60 10/60 10/60];
-    stimDirections = [1 1 1 -1 1 1 1 1];
     stimTfHzs = [0.25 0.25 0.5 0.5 0.25 0.25 0.25 0.25];
+    stimDirections = [1 1 1 -1 1 1 1 1];
     stimReverseProbs = [0 0 0 0 0 0 0 0];
     stimPauseSecs = [0 1 0 0 0 0 0 0];
+    stimRepeats = 100;
     
-    % Checks
+    % Checks that all vectors above have same length
     if (length(stimDurationMinutes) ~= length(stimCycles))
         error('Wrong number of durations specified');
     end
@@ -81,11 +99,14 @@ try
     end
     if (length(stimPauseSecs) ~= length(stimCycles))
         error('Wrong number of pauses specified');
-    end
-    
+    end 
     stimDurationsSecs = stimDurationMinutes*60;
-    stimRepeats = 100;
     
+    % These structs define the parameters of the basic stimulu types.  They
+    % end up in a cell array, and the index into that array is what is
+    % specified in vector stimCycles above. These are set up so that there
+    % is a moving and static version for each type.
+    %
     % Drifting grating struct
     %   Drifting, stimulus type 1
     %   Static version, stimulus type 2
@@ -98,11 +119,14 @@ try
     stimStruct.startingPhase = 1;
     stimStruct.contrast = 1;
     
-    % Don't change these
+    % Don't change these parameters. They could be made to do something useful
+    % in the future, but are not really set up now.
     stimStruct.sigma = Inf;
     stimStruct.theta = 0;
     stimStruct.xdist = 0;
     stimStruct.ydist = 0;
+    
+    % Static version of grating
     stimStructs{structIndex} = stimStruct;
     stimStructs{structIndex+1} = stimStructs{structIndex};
     stimStructs{structIndex+1}.name = 'BackgroundBars';
