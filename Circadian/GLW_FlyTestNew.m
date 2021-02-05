@@ -36,7 +36,7 @@ try
     % Control flow parameters.  Set these to true for regular running.
     % Setting to false controls things for development/debugging.
     fullScreen = false;                     % Set to false to run in a window.
-    regularTiming = false;                   % Runs each stimulus until space hit if false.
+    regularTiming = true;                   % Runs each stimulus until space hit if false.
     hideCursor = false;                     % Hide cursor
     
     % Path to data files
