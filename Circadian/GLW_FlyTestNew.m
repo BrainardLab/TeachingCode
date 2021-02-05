@@ -63,7 +63,7 @@ try
     stimDurationMinutes = [10/60 10/60 10/60 10/60 10/60 10/60 10/60 10/60];
     stimDirections = [1 1 1 -1 1 1 1 1];
     stimTfHzs = [0.25 0.25 0.5 0.5 0.25 0.25 0.25 0.25];
-    stimReverseProbs = [0 0 0 0 0 0 0 0];
+    stimReverseProbs = [0 0 0.5 0 0 0 0 0];
     stimPauseSecs = [0 1 0 0 0 0 0 0];
     
     % Checks
@@ -388,6 +388,13 @@ try
                     if (whichPhase == 1)
                         if (~firstTime)
                             WaitSecs(pauseSec);
+                            if (CoinFlip(1,reverseProb))
+                                if (phaseAdjust == 1)
+                                    phaseAdjust = -1;
+                                else
+                                    phaseAdjust = 1;
+                                end
+                            end
                         end
                         firstTime = false;
                     end
@@ -406,13 +413,6 @@ try
                         end
                         if (whichPhase < 1)
                             whichPhase = stimStruct.nPhases;
-                        end
-                        if (CoinFlip(1,reverseProb))
-                            if (phaseAdjust == 1)
-                                phaseAdjust = -1;
-                            else
-                                phaseAdjust = 1;
-                            end
                         end
                     end
                     win.draw;
