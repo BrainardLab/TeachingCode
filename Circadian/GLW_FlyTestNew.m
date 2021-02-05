@@ -1,4 +1,4 @@
-function GLW_FlyTest
+function GLW_FlyTestNew
 % GLW_FlyTest  Demonstrates how to drift a grating in GLWindow.
 %
 % Syntax:
