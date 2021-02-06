@@ -496,11 +496,18 @@ try
                     if (whichPhase == 1)
                         if (~firstTime)
                             WaitSecs(pauseSec);
+                            if (CoinFlip(1,reverseProb))
+                                if (phaseAdjust == 1)
+                                    phaseAdjust = -1;
+                                else
+                                    phaseAdjust = 1;
+                                end
+                            end
                         end
                         firstTime = false;
                     end
                     
-                    if (whichFrame == 1) 
+                    if (whichFrame == 1)
                         win.disableObject(sprintf('%s%d',stimStruct.name,oldPhase));
                         win.enableObject(sprintf('%s%d',stimStruct.name,whichPhase));
                         
@@ -511,13 +518,6 @@ try
                         end
                         if (whichPhase < 1)
                             whichPhase = stimStruct.nPhases;
-                        end
-                        if (CoinFlip(1,reverseProb))
-                            if (phaseAdjust == 1)
-                                phaseAdjust = -1;
-                            else
-                                phaseAdjust = 1;
-                            end
                         end
                     end
                     win.draw;
@@ -574,6 +574,13 @@ try
                     if (whichSize == 1)
                         if (~firstTime)
                             WaitSecs(pauseSec);
+                            if (CoinFlip(1,reverseProb))
+                                if (sizeAdjust == 1)
+                                    sizeAdjust = -1;
+                                else
+                                    sizeAdjust = 1;
+                                end
+                            end
                         end
                         firstTime = false;
                     end
@@ -594,13 +601,6 @@ try
                         end
                         if (whichSize < 1)
                             whichSize = stimStruct.nSizes;
-                        end
-                        if (CoinFlip(1,reverseProb))
-                            if (sizeAdjust == 1)
-                                sizeAdjust = -1;
-                            else
-                                sizeAdjust = 1;
-                            end
                         end
                     end
                     win.draw;
