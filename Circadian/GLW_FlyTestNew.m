@@ -1,9 +1,5 @@
 function GLW_FlyTestNew
-<<<<<<< HEAD
 % GLW_FlyTestNew
-=======
-% GLW_FlyTest  Demonstrates how to drift a grating in GLWindow.
->>>>>>> 1ab7f0b528be215e49294c1939eab83b160925a8
 %
 % Syntax:
 %     GLW_FlyTestNew
@@ -42,12 +38,9 @@ try
     % Setting to false controls things for development/debugging.
     fullScreen = false;                     % Set to false to run in a window.
     regularTiming = true;                   % Runs each stimulus until space hit if false.
-<<<<<<< HEAD
     
     % Hide cursor during experiment? It's cleaner if you hide it, but then
     % things get a bit messed up at the end of the run.
-=======
->>>>>>> 1ab7f0b528be215e49294c1939eab83b160925a8
     hideCursor = false;                     % Hide cursor
     
     % Path to data files
@@ -86,12 +79,8 @@ try
     stimCycles = [2 1 1 1 4 3 6 5];
     stimDurationMinutes = [10/60 10/60 10/60 10/60 10/60 10/60 10/60 10/60];
     stimTfHzs = [0.25 0.25 0.5 0.5 0.25 0.25 0.25 0.25];
-<<<<<<< HEAD
-    stimDirections = [1 1 1 -1 1 1 1 1];
-    stimReverseProbs = [0 0 0 0 0 0 0 0];
-=======
+    stimDirections = [1 1 1 -1 1 1 1 1]; 
     stimReverseProbs = [0 0 0.5 0 0 0 0 0];
->>>>>>> 1ab7f0b528be215e49294c1939eab83b160925a8
     stimPauseSecs = [0 1 0 0 0 0 0 0];
     stimRepeats = 100;
     
@@ -448,13 +437,6 @@ try
                         end
                         if (whichPhase < 1)
                             whichPhase = stimStruct.nPhases;
-                        end
-                        if (CoinFlip(1,reverseProb))
-                            if (phaseAdjust == 1)
-                                phaseAdjust = -1;
-                            else
-                                phaseAdjust = 1;
-                            end
                         end
                     end
                     win.draw;
