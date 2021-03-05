@@ -24,7 +24,7 @@ S = cal.describe.S;
 figure(1);
 plot(SToWls(cal.S_ambient),cal.P_ambient,'k');
 title( 'Monitor Ambient' ) 
-xlabel( 'Wavelength [ nm ]' ), ylabel( 'Radiance [ W / m^2 / sr / nm ]' ) 
+xlabel( 'Wavelength [ nm ]' ), ylabel( 'Radiance [ W / m^2 / sr / wl-band ]' ) 
 ambient = cal.P_ambient;
 
 %% Plot the three monitor phosphors.  Each phosphor spectrum is in a separate
@@ -39,7 +39,7 @@ plot(SToWls(cal.S_ambient),redPhosphor,'r','LineWidth',3);
 plot(SToWls(cal.S_ambient),greenPhosphor,'g','LineWidth',3);;
 plot(SToWls(cal.S_ambient),bluePhosphor,'b','LineWidth',3);
 title( 'Monitor channel spectra','FontSize',24);
-xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / nm ]','FontSize',24);
+xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / wl-band ]','FontSize',24);
 hold off
 FigureSave('MonitorSpectra',gcf,'pdf');
 
