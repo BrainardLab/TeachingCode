@@ -89,19 +89,6 @@ PLOT = 1;
 % Here is the compute part.
 try
     if (COMPUTE)
-        %% DO WE NEED TO OPEN A MATLAB POOL?
-        % Only do this if we are running on the cluster and were not invoked with parmgo.
-        % That means we're running interactively on the cluster.
-        %
-        % In real code, make sure to choose desiredPoolSize judiciously and with an eye
-        % to what the cluster queue looks like.
-        if (IsCluster && matlabpool('size') == 0)
-            desiredPoolSize = 10;
-            matlabpool(desiredPoolSize);
-            NEEDTOCLOSEPOOL = 1;
-        else
-            NEEDTOCLOSEPOOL = 0;
-        end
         
         %% LOAD AND PLOT SOME DATA
         % Let's start with some data. These are just typed in, but to be helpful the comments say what
@@ -237,10 +224,7 @@ try
             error('Your version of the optimization toolbox is too old.  Update it.');
         end
         options = optimset('fmincon');
-        options = optimset(options,'Diagnostics','off','Display','off','LargeScale','off','Algorithm','active-set');
-        if (IsCluster && matlabpool('size') > 1)
-            options = optimset(options,'UseParallel','always');
-        end
+        options = optimset(options,'Diagnostics','off','Display','iter','LargeScale','off','Algorithm','active-set');
         
         % Call fmincon function and we pass it following arguments:
         %  'FitLinFunction, which computes an error we want to minimize (see 'FitLinFunction.m')
@@ -280,9 +264,6 @@ try
         %% NOW USE PATTERNSEARCH FUNCTION, WHICH USES A DIFFERENT CLASS OF ALGORITHM.
         optionsPS=psoptimset('patternsearch');
         optionsPS=psoptimset(optionsPS,'Display','off');
-        if (IsCluster && matlabpool('size') > 1)
-            optionsPS=psoptimset(optionsPS,'UseParallel','always');
-        end
         psStart=tic;
         xPS = patternsearch(@(x)FitLinFunction(x,testLuminance,allMatches),x0,[],[],[],[],vlb,vub,[],optionsPS);
         patternSearchTime=toc(psStart);
@@ -298,9 +279,6 @@ try
         optionsGA = gaoptimset('ga');
         optionsGA = gaoptimset(optionsGA,'Display','off');
         optionsGA = gaoptimset(optionsGA,'MutationFcn',@mutationadaptfeasible);
-        if (IsCluster && matlabpool('size') > 1)
-            gaoptimset(optionsGA,'UseParallel','always');
-        end
         nParams=size(x0,2);
         gaStart=tic;
         xGA = ga(@(x)FitLinFunction(x,testLuminance,allMatches),nParams,[],[],[],[],vlb,vub,[],optionsGA);
@@ -332,11 +310,6 @@ try
         %% SAVE THE DATA
         close all
         save parameterSearchTutorial
-        
-        %% CLOSE MATLAB POOL
-        if (NEEDTOCLOSEPOOL)
-            matlabpool('close');
-        end
     end
     
     % Here is the analysis part, that uses what was computed above.  When the compute part
@@ -422,9 +395,6 @@ try
     
 %% Close Matlab pool on error
 catch theErr
-    if (NEEDTOCLOSEPOOL)
-        matlabpool('close');
-    end
     rethrow(theErr);
 end
 
