@@ -24,6 +24,6 @@ function pwm = bytesToPWMYellow(byte)
 %    10/03/20  dhb Current version and comments
 
 % Do the conversion
-pwm = byte / 255;
+pwm = (255-byte) / 255;
 
 end

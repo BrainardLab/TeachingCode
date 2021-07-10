@@ -37,8 +37,8 @@ yellowDelta = yellowDeltas(yellowDeltaIndex);   % Current yellow delta
 
 % Red/green mixture parameters.  These get traded off in the
 % mixture by a parameter lambda.
-redAnchor = 58;                                 % Red value for lambda = 1
-greenAnchor = 440;                              % Green value for lambda = 0
+redAnchor = 50;                                 % Red value for lambda = 1
+greenAnchor = 350;                              % Green value for lambda = 0
 lambda = 0.5;                                   % Initial lambda value
 lambdaDeltas = [0.02 0.005 0.001];              % Set of lambda deltas
 lambdaDeltaIndex = 1;                           % Delta index
@@ -74,7 +74,19 @@ FlushEvents;
 while true
     % Set red and green values based on current lambda
     red = round(lambda*redAnchor);
+    if (red < 0)
+        red = 0;
+    end
+    if (red > 255)
+        red = 255;
+    end
     green = round((1-lambda)*greenAnchor);
+    if (green < 0)
+        green = 0;
+    end
+    if (green > 255)
+        green = 255;
+    end
     
     % Handle special modes for red and green
     if (redOnly)
