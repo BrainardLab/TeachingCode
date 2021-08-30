@@ -202,3 +202,6 @@ fprintf('Predicted blue xyY: %0.3f %0.3f %0.1f cd/m2\n',predBluexyY(1),predBluex
 whiteLum = predRedxyY(3) + predGreenxyY(3) + predBluexyY(3);
 fprintf('RGB normalized luminances: %0.3f %0.3f %0.3f\n',predRedxyY(3)/whiteLum,predGreenxyY(3)/whiteLum,predBluexyY(3)/whiteLum);
 
+%% Show that gamma is properly pinned at 0 and 1.
+PrimaryToSettings(cal,[0 0 0]')
+PrimaryToSettings(cal,[1 1 1]')
