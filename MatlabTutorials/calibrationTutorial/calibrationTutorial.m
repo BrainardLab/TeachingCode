@@ -10,53 +10,58 @@
 % 12/02/09 dhb      Fix up some bugs because we're now in the 0-1 world, not DAC values.
 % 05/27/10 dhb      Prompt for input file, simplify logic and checks.
 % 09/28/17 dhb      Update savefig->FigureSave and new location of S in cal structure.
+% 09/03/21 mab      Updated to work with object and struct cal files.
 
 %% Clear
 clear; close all;
 
 %% Load a test calibration file
 cal = LoadCalFile('PTB3TestCal');
+ 
+[calStructOBJ, inputArgIsACalStructOBJ] = ObjectToHandleCalOrCalStruct(cal)
 
 % Get wavelength sampling of functions in cal file.
-S = cal.describe.S;
+S = calStructOBJ.get('S');
 
 %% Plot the ambient light
 figure(1);
-plot(SToWls(cal.S_ambient),cal.P_ambient,'k');
+plot(SToWls(S),calStructOBJ.get('P_ambient'),'k');
 title( 'Monitor Ambient' ) 
 xlabel( 'Wavelength [ nm ]' ), ylabel( 'Radiance [ W / m^2 / sr / wl-band ]' ) 
-ambient = cal.P_ambient;
+ambient = calStructOBJ.get('P_ambient');
 
 %% Plot the three monitor phosphors.  Each phosphor spectrum is in a separate
 % column of the matrix cal.P_device.  In MATLAB, can use the : operator to
 % help extract various pieces of a matrix.  So:
-redPhosphor = cal.P_device(:,1);
-greenPhosphor = cal.P_device(:,2);
-bluePhosphor = cal.P_device(:,3);
+P_device      = calStructOBJ.get('P_device');
+redPhosphor   = P_device(:,1);
+greenPhosphor = P_device(:,2);
+bluePhosphor  = P_device(:,3);
 figure(2);clf; hold on
 set(gca,'FontName','Helvetica','FontSize',18);
-plot(SToWls(cal.S_ambient),redPhosphor,'r','LineWidth',3);
-plot(SToWls(cal.S_ambient),greenPhosphor,'g','LineWidth',3);;
-plot(SToWls(cal.S_ambient),bluePhosphor,'b','LineWidth',3);
+plot(SToWls(S),redPhosphor,'r','LineWidth',3);
+plot(SToWls(S),greenPhosphor,'g','LineWidth',3);;
+plot(SToWls(S),bluePhosphor,'b','LineWidth',3);
 title( 'Monitor channel spectra','FontSize',24);
 xlabel( 'Wavelength [ nm ]','FontSize',24); ylabel( 'Radiance [ W / m^2 / sr / wl-band ]','FontSize',24);
 hold off
-FigureSave('MonitorSpectra',gcf,'pdf');
+%FigureSave('MonitorSpectra',gcf,'pdf');
 
 %% Plot the gamma curves
 figure(3); clf; hold on
 set(gca,'FontName','Helvetica','FontSize',18);
-gammaInput = cal.gammaInput;
-redGamma = cal.gammaTable(:,1);
-greenGamma = cal.gammaTable(:,2);
-blueGamma = cal.gammaTable(:,3);
+gammaInput = calStructOBJ.get('gammaInput');
+gammaTable = calStructOBJ.get('gammaTable');
+redGamma   = gammaTable(:,1);
+greenGamma = gammaTable(:,2);
+blueGamma  = gammaTable(:,3);
 plot(gammaInput,redGamma,'r','LineWidth',3);
 plot(gammaInput,greenGamma,'g','LineWidth',3);
 plot(gammaInput,blueGamma,'b','LineWidth',3);
 title( 'Monitor gamma curves','FontSize',24);
 xlabel( 'Input RGB','FontSize',24); ylabel( 'Normalized Output','FontSize',24);
 hold off
-FigureSave('MonitorGamma',gcf,'pdf');
+%FigureSave('MonitorGamma',gcf,'pdf');
 
 %% Plot the human cones.
 %
@@ -71,7 +76,7 @@ plot(SToWls(S_cones_ss2),T_cones_ss2(3,:),'b','LineWidth',3);
 title( 'LMS Cone Fundamentals','FontSize',24);
 xlabel( 'Wavelength','FontSize',24); ylabel( 'Sensitivity','FontSize',24);
 hold off
-FigureSave('ConeFundamentals',gcf,'pdf');
+%FigureSave('ConeFundamentals',gcf,'pdf');
 
 %% Get and plot the XYZ color matching functions.  See "help PsychColorimetricMatFiles'
 load T_xyz1931
@@ -85,18 +90,18 @@ title( 'Color matching functions' )
 xlabel( 'Wavelength [ nm ]' ), ylabel( 'Spectral sensitivities');
 
 %% Standard initialization of calibration structure
-cal = SetSensorColorSpace(cal,T_xyz,S);
-cal = SetGammaMethod(cal,0);
+SetSensorColorSpace(calStructOBJ,T_xyz,S);
+SetGammaMethod(calStructOBJ,0);
 
 %% Choose a target XYZ that is within monitor gamut.
 % 
 % We'll do this using Psychtoolbox calibration code.
 targetrgb = [0.4 0.7 0.6]';
-targetXYZ = PrimaryToSensor(cal,targetrgb);
+targetXYZ = PrimaryToSensor(calStructOBJ,targetrgb);
 
 %% Here's how we compute RGB with calibration routines.
-targetRGB = SensorToSettings(cal,targetXYZ);
-calComputeXYZ = SettingsToSensor(cal,targetRGB);
+targetRGB = SensorToSettings(calStructOBJ,targetXYZ);
+calComputeXYZ = SettingsToSensor(calStructOBJ,targetRGB);
 if (max(abs(targetXYZ-calComputeXYZ))/min(abs(targetXYZ)) < 0.001)
     fprintf('Psychtoolbox XYZ from RGB calculation obtains target to better than 0.1%%\n');
 else
@@ -104,13 +109,13 @@ else
 end
 
 %% And this goes back to the specified linear rgb values, from either RGB or XYZ
-calComputergb = SettingsToPrimary(cal,targetRGB);
+calComputergb = SettingsToPrimary(calStructOBJ,targetRGB);
 if (max(abs(targetrgb-calComputergb))/min(abs(targetrgb)) < 0.001)
     fprintf('Psychtoolbox rgb from RGB calculation obtains target to better than 0.1%%\n');
 else
     fprintf('Psychtoolbox rgb from RGB calculation misses target by more than 0.1%%\n');
 end
-calComputergb2 = SensorToPrimary(cal,targetXYZ);
+calComputergb2 = SensorToPrimary(calStructOBJ,targetXYZ);
 if (max(abs(targetrgb-calComputergb2))/min(abs(targetrgb)) < 0.001)
     fprintf('Psychtoolbox rgb from XYZ calculation obtains target to better than 0.1%%\n');
 else
@@ -149,7 +154,7 @@ end
 %% Manual calculation of RGB from targetXYZ 
 
 % Compute the matrix that takes phosphor spectra to XYZ
-Mrgb2xyz = T_xyz*cal.P_device(:,1:3);
+Mrgb2xyz = T_xyz*P_device(:,1:3);
 Mxyz2rgb = inv(Mrgb2xyz);
 
 % Subtract ambient light XYZ target XYZ
@@ -182,14 +187,14 @@ end
 % The CCT doesn't agree with what SV outputs, however.cd 
 % This may be a bug in SV, in cct, or a fact that the
 % standard is a bit underspecified.
-predictedWhiteXYZ = SettingsToSensor(cal,[1 1 1]');
+predictedWhiteXYZ = SettingsToSensor(calStructOBJ,[1 1 1]');
 predicted1960uvY = XYZTouvY(predictedWhiteXYZ,1);
 predictedWhitexyY = XYZToxyY(predictedWhiteXYZ);
-predictedBlackXYZ = SettingsToSensor(cal,[0 0 0]');
+predictedBlackXYZ = SettingsToSensor(calStructOBJ,[0 0 0]');
 predictedBlackxyY = XYZToxyY(predictedBlackXYZ);
-predRedxyY = XYZToxyY(SettingsToSensor(cal,[1 0 0]')-predictedBlackXYZ);
-predGreenxyY = XYZToxyY(SettingsToSensor(cal,[0 1 0]')-predictedBlackXYZ);
-predBluexyY = XYZToxyY(SettingsToSensor(cal,[0 0 1]')-predictedBlackXYZ);
+predRedxyY = XYZToxyY(SettingsToSensor(calStructOBJ,[1 0 0]')-predictedBlackXYZ);
+predGreenxyY = XYZToxyY(SettingsToSensor(calStructOBJ,[0 1 0]')-predictedBlackXYZ);
+predBluexyY = XYZToxyY(SettingsToSensor(calStructOBJ,[0 0 1]')-predictedBlackXYZ);
 fprintf('White point xyY: %0.3f %0.3f %0.1f cd/m2\n',predictedWhitexyY(1),predictedWhitexyY(2),predictedWhitexyY(3));
 fprintf('Black point Y: %0.2f cd/m2\n',predictedBlackxyY(3));
 if (exist('cct','file'))
@@ -203,5 +208,5 @@ whiteLum = predRedxyY(3) + predGreenxyY(3) + predBluexyY(3);
 fprintf('RGB normalized luminances: %0.3f %0.3f %0.3f\n',predRedxyY(3)/whiteLum,predGreenxyY(3)/whiteLum,predBluexyY(3)/whiteLum);
 
 %% Show that gamma is properly pinned at 0 and 1.
-PrimaryToSettings(cal,[0 0 0]')
-PrimaryToSettings(cal,[1 1 1]')
+PrimaryToSettings(calStructOBJ,[0 0 0]')
+PrimaryToSettings(calStructOBJ,[1 1 1]')
