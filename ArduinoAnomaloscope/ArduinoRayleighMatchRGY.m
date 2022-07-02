@@ -15,8 +15,17 @@
 % in some other manner.
 %
 % This adds the Arduino toolbox to the path if it isn't there.
+% Does it's best to guess where it is in a version and user independnet
+% manner.  Will probably fail on Windows and Linux
 if (~exist('arduinosetup.m','file'))
-    addpath(genpath('/Users/dhb/Documents/MATLAB/SupportPackages/R2020a'))
+    if (~strcmp(computer,'MACI64'))
+        error('You need to modify code for Windows/Linux to get the Arduino AddOn Toolbox onto your path');
+    end
+    a = ver;
+    rel = a(1).Release(2:end-1);
+    sysInfo = GetComputerInfo;
+    user = sysInfo.userShortName;
+    addpath(genpath(fullfile('/Users',user,'Documents','MATLAB','SupportPackages',rel)));
 end
 
 % Initialize arduino
