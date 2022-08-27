@@ -7,6 +7,10 @@
 
 % History
 %   Written 2020 by David Brainard based on demo code provided by Liana Keesing.
+%
+%   2022-08-27  dhb  Autodect of port for compatibility with newer systesm.
+%                    Thanks to John Mollon's group for identifying the
+%                    basic problem and fix.
 
 % Put the arduino toolbox some place on you system. This
 % the adds it dynamically. The Matlab add on manager doesn't
@@ -29,9 +33,45 @@ if (~exist('arduinosetup.m','file'))
 end
 
 % Initialize arduino
+%
+% In newer versions of OS/Matlab, the arduino call without an argument
+% fails because the port naming convention it assumes fails.  
+%
+% We look for possible ports.  If none, we try a straight call to arduino
+% because it might work.  Otherwise we try each port in turn, hoping we 
+% can open the arduino on one of them.
 clear;
 clear a;
-a = arduino;
+devRootStr = '/dev/cu.usbmodem';
+arduinoType = 'leonardo';
+possiblePorts = dir([devRootStr '*']);
+openedOK = false;
+if (isempty(possiblePorts))
+    try 
+        a = arduino;
+        openedOK = true;
+        fprintf('Opened arduino using arduino function''s autodetect of port and type\n');
+    catch e
+        fprintf('Could not detect the arduino port or otherwise open it.\n');
+        fprintf('Rethrowing the underlying error message.\n');
+        rethrow(e);
+    end
+else
+    for pp = 1:length(possiblePorts)
+        thePort = fullfile(possiblePorts.folder,possiblePorts.name);
+        try
+            a = arduino(thePort,arduinoType);
+            openedOK = true;
+        catch e
+        end
+    end
+    if (~openedOK)
+        fprintf('Despite our best cleverness, unable to open arduino. Exiting with an error\n');
+        error('');
+    else
+        fprintf('Opened arduino on detected port %s\n',thePort);
+    end
+end
 
 % Initial LED parameters.  These are close to a match with my device,
 % Scotch tape as diffuser, and a Roscolux #23 orange filter

@@ -12,6 +12,10 @@
 
 % History
 %   Written 2020 by David Brainard based on demo code provided by Liana Keesing.
+%
+%   2022-08-27  dhb  Autodect of port for compatibility with newer systesm.
+%                    Thanks to John Mollon's group for identifying the
+%                    basic problem and fix.
 
 % Put the arduino toolbox some place on you system. This
 % the adds it dynamically. The Matlab add on manager doesn't
