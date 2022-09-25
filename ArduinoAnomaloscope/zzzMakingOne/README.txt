@@ -12,6 +12,8 @@ The diagram of the arduino shield shown in the instructions is for an Uno shield
 
 The 3D printing part is for the housing we developed, but there would be many other ways to house and view the LEDs.
 
-Instructions for installing the Matlab control software are in the top level directory.
+Matlab code for running the anomaloscope as well as Instructions for installing it are in
+	https://github.com/BrainardLab/TeachingCode.git, directory ArduinoAnomaloscope
+
 
 The anomaloscope was developed by Liana Keesing and David Brainard
