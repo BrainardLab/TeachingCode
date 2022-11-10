@@ -52,6 +52,7 @@
 %                    repository.
 %   08/22/2020  dhb  Better comments, variable naming, etc.
 %   08/25/2020  dhb  Add in Konig fundamental section.
+%   11/10/2022  dhb  Added planar method for Konig fundamentals at the end.
 
 %% Initialize
 clear; close all; drawnow;
@@ -720,6 +721,109 @@ xlabel('Wavelength (nm)','FontSize',figParams.labelFontSize);
 ylabel('Cone Fundamental (energy units)','FontSize',figParams.labelFontSize);
 title('Target and Konig Derived Fundamentals','FontSize',figParams.titleFontSize);
 cbFigAxisSet(stockmanSharpe10Fig,figParams);
+
+%% Brian Wandell alerted me to another approach to this.
+%
+% This approach is implemented and unpacked here.  The
+% approach uses just the color matching functions each of the
+% three types of reduction dichromats.  Interestingly, the three
+% sets of dichromatic color matching functions do not need to be
+% made with respect to the same set of primaries.
+%
+% Above we learned that color matching functions are always a linear
+% transformation of the underlying cone fundamentals.  Here we create
+% set of Cmfs for each type of dichromat by applying a random linear 
+% transformation to the cone fundamentals for each.
+tritanCmfs = rand(2,2)*T_cones10_1nm([1 2],:);
+deutanCmfs = rand(2,2)*T_cones10_1nm([1 3],:);
+protanCmfs = rand(2,2)*T_cones10_1nm([2 3],:);
+
+% The two rows of tritanCmfs span a plane in the
+% space of spectra, and this plane contains both 
+% the L and M cone fundamentals. This is the case 
+% because applying a 2 by 2 linear transformation 
+% to the fundamentals produces vectors within the
+% span of those two fundamentals, hence a plane
+% in the spectral space that contains the fundamentals.
+%
+% The two rows of duetanCmfs span a different plane
+% in the spectral space, and this plane contains the
+% L and S fundamentals, following the same logic as
+% just above.
+%
+% Since both planes contain the same vector (the L
+% cone fundamental), and since the planes are distinct
+% (one contains the M cone fundamental and the other the S)
+% these two planes intersect at one line, and this line
+% defines the L cone fundamental. 
+%
+% As we'll see below, the only facts about the Cmfs that
+% we'll rely on below are the identity of the planes as
+% described, and the intersections between them.  The
+% particular primaries used don't change the identity of
+% the planes but only moves points around within them, which
+% is why we don't need to know the primaries and are robust
+% with respect to whether the are the same across the Cmfs for
+% each type of dichromat.
+%
+% Let's find the intersection.  We require for two row vectors
+% x and y, that:
+%     x*tritanCmfs = y*deutanCmfs ->
+%     x*trianCmfs - y*deutanCmfs = 0
+%
+% Rearranging as a single matrix equation for x and y
+%     [x, -y]*[tritanCmfs ; deutanCmfs] = 0;
+% 
+% This means the 4-vector [x, -y] must be in the null space of
+% the matrix [tritanCmfs ; deutanCmfs].  We use the matlab function
+% null() to find the nullspace, with approprate transposes to match
+% the conventions expected by that funcion.
+xy = null([tritanCmfs ; deutanCmfs]')';
+
+% Both x*tritanCmfs and y*deutanCmfs lie along the plane intersection,
+% and thus both are aligned with the L cone fundamental. Both the
+% sign and scaling of these is not determined by the analysis - we
+% only get the fundamentals up to an unknown overal scale factor in
+% magnitude, and we know that the fundamentals are positive.
+LconeFundEstimate1 = xy(1:2)*tritanCmfs;
+index = find(max(abs(LconeFundEstimate1(:))));
+if (LconeFundEstimate1(index) < 0)
+    LconeFundEstimate1 = -LconeFundEstimate1;
+end
+LconeFundEstimate1 = LconeFundEstimate1/max(LconeFundEstimate1(:));
+LconeFundEstimate2 = -xy(3:4)*deutanCmfs;
+index = find(max(abs(LconeFundEstimate2(:))));
+if (LconeFundEstimate2(index) < 0)
+    LconeFundEstimate2 = -LconeFundEstimate2;
+end
+LconeFundEstimate2 = LconeFundEstimate2/max(LconeFundEstimate2(:));
+
+[planeDerivedFig,figParams] = cbFigInit;
+figParams.xLimLow = 350;
+figParams.xLimHigh = 750;
+figParams.xTicks = [350 400 450 500 550 600 650 700 750];
+figParams.xTickLabels = {'^{ }350_{ }' '^{ }400_{ }' '^{ }450_{ }' '^{ }500_{ }' ...
+    '^{ }550_{ }' '^{ }600_{ }' '^{ }650_{ }' '^{ }700_{ }' '^{ }750_{ }'};
+figParams.yLimLow = 0;
+figParams.yLimHigh = 1;
+figParams.yTicks = [0 0.5 1];
+figParams.yTickLabels = {' 0.0 ' ' 0.5 ' ' 1.0 '};
+
+% Plot the L cone fundamental.
+plot(wls_1nm,T_cones10_1nm(1,:)','r','LineWidth',figParams.lineWidth+1);
+
+% Pop on top the fit derived from the planar analysis above.
+plot(wls_1nm,LconeFundEstimate1','k','LineWidth',figParams.lineWidth-1);
+plot(wls_1nm,LconeFundEstimate2','y:','LineWidth',figParams.lineWidth-2);
+
+xlabel('Wavelength (nm)','FontSize',figParams.labelFontSize);
+ylabel('Cone Fundamental (energy units)','FontSize',figParams.labelFontSize);
+title('Target and Planar Konig Derived L Fundamental','FontSize',figParams.titleFontSize);
+cbFigAxisSet(stockmanSharpe10Fig,figParams);
+
+%% As an exercise, you can repeat the planar analysis above for M and S
+%
+% and add to the plot
 
 
 
