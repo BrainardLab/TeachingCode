@@ -722,10 +722,12 @@ ylabel('Cone Fundamental (energy units)','FontSize',figParams.labelFontSize);
 title('Target and Konig Derived Fundamentals','FontSize',figParams.titleFontSize);
 cbFigAxisSet(stockmanSharpe10Fig,figParams);
 
-%% Brian Wandell alerted me to another approach to this.
+%% Brian Wandell alerted me to a subspace approach to this.
 %
-% This approach is implemented and unpacked here.  The
-% approach uses just the color matching functions each of the
+% This approach is implemented and unpacked here, first following
+% a geometric approach and then a more algebraic approach.
+% 
+% The subspace approach uses just the color matching functions each of the
 % three types of reduction dichromats.  Interestingly, the three
 % sets of dichromatic color matching functions do not need to be
 % made with respect to the same set of primaries.
@@ -734,9 +736,12 @@ cbFigAxisSet(stockmanSharpe10Fig,figParams);
 % transformation of the underlying cone fundamentals.  Here we create
 % set of Cmfs for each type of dichromat by applying a random linear 
 % transformation to the cone fundamentals for each.
-tritanCmfs = rand(2,2)*T_cones10_1nm([1 2],:);
-deutanCmfs = rand(2,2)*T_cones10_1nm([1 3],:);
-protanCmfs = rand(2,2)*T_cones10_1nm([2 3],:);
+Mt = rand(2,2);
+Md = rand(2,2);
+Mp = rand(2,2);
+tritanCmfs = Mt*T_cones10_1nm([1 2],:);
+deutanCmfs = Md*T_cones10_1nm([1 3],:);
+protanCmfs = Mp*T_cones10_1nm([2 3],:);
 
 % The two rows of tritanCmfs span a plane in the
 % space of spectra, and this plane contains both 
@@ -821,8 +826,43 @@ ylabel('Cone Fundamental (energy units)','FontSize',figParams.labelFontSize);
 title('Target and Planar Konig Derived L Fundamental','FontSize',figParams.titleFontSize);
 cbFigAxisSet(stockmanSharpe10Fig,figParams);
 
-%% As an exercise, you can repeat the planar analysis above for M and S
+%% Algebraic version (due to Wandell/Goossens)
 %
+% The subspace method immediately can also be developed algebraically.
+% We come back to the equation from above.  We have the measure Cmfs
+%    [tritanCmfs ; deutanCmfs] = [ Mt*[Lfund ; Mfund] ; Md*[Lfund ; Sfund] ]
+%
+% Let the 4 by 4 matrix MM be the block diagonal matrix
+%    MM = [Mt, zeros(2,2) ; zeros(2,2), Md]
+%
+% This lets us rewrite
+%    [tritanCmfs ; deutanCmfs] = MM*[Lfund ; Mfund ; Lfund ; Sfund] ->
+%    null([tritanCmfs ; deutanCmfs]) = null(MM*[Lfund ; Mfund ; Lfund ; Sfund])
+%
+% Denote the basis for the null space of the LHS as xy (computed above), then 
+%    xy * MM * [Lfund ; Mfund ; Lfund ; Sfund] = 0;
+%
+% Since MM is non-singular, the equation above can only hold if nn*MM
+% is in the null space of [Lfund ; Mfund ; Lfund ; Sfund], and that
+% null space has basis [1 0 -1 0]. So we have
+%   xy * MM = [1 0 -1 0].
+% 
+% This means that 
+%   xy = [1 0 -1 0] * inv(MM).
+% 
+% This gives us xy = [inv(Mt)(1,1) inv(Mt(1,2) -inv(Md)(1,1) -inv(Md)(1,2)]
+%
+% Working out the first row of inv(Mt)*Mt*[Lfund ; Mfund]:
+%   Lfund = [xy(1) xy(2)]*tritanCmfs
+% and of inv(Md)*Md*[Lfund ; Sfund]
+%   Lfund = [-xy(3) -xy(4)]*deutanCmfs
+%
+% These are what we computed above, again up to uncertainty about sign
+% and magnitude because of that ambiguity in the basis for a null space.
+
+%% As an exercise
+%
+% You can repeat the planar analysis above for M and S fundamentals
 % and add to the plot
 
 
