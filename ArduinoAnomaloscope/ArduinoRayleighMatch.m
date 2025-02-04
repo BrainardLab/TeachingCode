@@ -27,7 +27,7 @@
 % Does it's best to guess where it is in a version and user independnet
 % manner.  Will probably fail on Windows and Linux
 if (~exist('arduinosetup.m','file'))
-    if (~strcmp(computer,'MACI64'))
+    if (~strcmp(computer,'MACI64') & ~strcmp(computer,'MACA64'))
         error('You need to modify code for Windows/Linux to get the Arduino AddOn Toolbox onto your path and to get the arduino call to find the device');
     end
     a = ver;
@@ -101,8 +101,11 @@ greenOnly = false;
 % Setup character capture.  Note that if you crash out of the program
 % you need to execute ListenChar(0) before you can enter keys at keyboard 
 % again.
-ListenChar(2);
-FlushEvents;
+PTB = false;
+if (PTB)
+    ListenChar(2);
+    FlushEvents;
+end
 
 % KbName('UnifyKeyNames');
 %
@@ -175,7 +178,13 @@ while true
     
     % Check for chars and process if one is pressed.  See comment above for
     % what each character does.
-    switch GetChar
+    if (PTB)
+        theChar = GetChar;
+    else
+        theString = input('Enter char followed by enter: ','s');
+        theChar = theString(1);
+    end
+    switch theChar
         case 'q'
             break;
             
@@ -236,7 +245,9 @@ while true
 end
 
 % Turn off character capture.
-ListenChar(0);
+if (PTB)
+    ListenChar(0);
+end
 
 % Close arduino
 clear a;
