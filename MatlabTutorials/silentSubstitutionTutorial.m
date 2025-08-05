@@ -116,7 +116,7 @@ t_dir = t_test_dir - t_bg;
 k_max_analytic = MaximizeGamutContrast(t_dir,t_bg);
 fprintf('Maximum value of k for L-cone isolation via MaximizeGamutContrast: %0.4f\n',k_max_analytic);
 
-%% Find isolating direction using BrainardLabToolbox function ReceptorIsolate.
+%% Find isolating direction using SilentSubstitutionToolbox function ReceptorIsolate.
 %
 % This function has lots of bells and whistles, and dealsw with the case where the number
 % of primaries exceeds the number of cone classes, as well as allowing other constraints
@@ -129,13 +129,17 @@ fprintf('Maximum value of k for L-cone isolation via MaximizeGamutContrast: %0.4
 T_receptors = T_cones_sp;
 whichReceptorsToIsolate = 1;        % isolate the L cone
 whichReceptorsToIgnore = [];
-B_primary = B_monitor;              % device primaries
+whichReceptorsToMinimize = [];
+B_primary = B_monitor;                 % device primaries
 backgroundPrimary = t_bg; 
-initialPrimary = t_bg;              % take background as initial guess
+initialPrimary = t_bg;                      % take background as initial guess
 whichPrimariesToPin = [];
-primaryHeadRoom = 0;                % go to the full gamut
-maxPowerDiff = Inf;                 % No smoothness constraint
-t_test_max_receptorIsolate = ReceptorIsolate(T_receptors,whichReceptorsToIsolate,whichReceptorsToIgnore,B_primary,backgroundPrimary,initialPrimary,whichPrimariesToPin,primaryHeadRoom,maxPowerDiff);
+primaryHeadRoom = 0;                  % go to the full gamut
+maxPowerDiff = 10^4;                    % big for no smoothness constraint
+t_test_max_receptorIsolate = ReceptorIsolate(T_receptors, ...
+    whichReceptorsToIsolate,whichReceptorsToIgnore,whichReceptorsToMinimize, ...
+    B_primary,backgroundPrimary,initialPrimary,whichPrimariesToPin,primaryHeadRoom, ...
+    maxPowerDiff,[]);
 
 % Add to previous plot.  Should (and does) overlay what was plotted there.
 spd_test_max_receptorIsolate = B_monitor * t_test_max_receptorIsolate;
