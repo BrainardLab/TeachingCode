@@ -47,7 +47,6 @@ load spd_D65
 % Verify that obtaining M_ConesToXYZ by taking the
 % inverse of M_XYZToCones works for the other direction.
 
-
 %% 3) Find the linear transformation M_XYZTorgb that
 % obtains the linear phosphor weights rgb from desired
 % XYZ coordinates.
