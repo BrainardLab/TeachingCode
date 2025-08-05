@@ -18,7 +18,7 @@ clear; close all;
 %% Load a test calibration file
 cal = LoadCalFile('PTB3TestCal');
  
-[calStructOBJ, inputArgIsACalStructOBJ] = ObjectToHandleCalOrCalStruct(cal)
+[calStructOBJ, inputArgIsACalStructOBJ] = ObjectToHandleCalOrCalStruct(cal);
 
 % Get wavelength sampling of functions in cal file.
 S = calStructOBJ.get('S');
